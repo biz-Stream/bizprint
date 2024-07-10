@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+	<section key="Application">
+		<entry key="browserset" type="string">iexplore=iexplore,firefox=firefox,chrome=chrome,browser_broker=Edge,RuntimeBroker=Edge,explorer=Edge,sihost=Edge,msedge=msedge</entry>
+		<entry key="cleanup_tmpfolder" type="string">true</entry>
+		<entry key="cpucheckloopmax" type="string">0</entry>
+		<entry key="cpucheckpercentage" type="string">70</entry>
+		<entry key="defaultBrowser" type="string">iexplore</entry>
+		<entry key="defaultPrinterCheckInterval" type="string">33</entry>
+		<entry key="defaultPrinterTimeout" type="string">10000</entry>
+		<entry key="exitTimerEnabled" type="string">true</entry>
+		<entry key="exitTimerLimit" type="string">30</entry>
+		<entry key="formCreateRetryNum" type="string">5</entry>
+		<entry key="formCreateRetryWaitMsec" type="string">500</entry>
+		<entry key="formCreateTimeoutCheckMsec" type="string">100</entry>
+		<entry key="formCreateTimeoutMsec" type="string">10000</entry>
+		<entry key="histMax" type="string">100</entry>
+		<entry key="holdTime" type="string">86400</entry>
+		<entry key="killProcessNames" type="string">AcroRd32,Acrobat,RdrCEF</entry>
+		<entry key="killProcessPrintCount" type="string">0</entry>
+		<entry key="loadRetryNum" type="string">5</entry>
+		<entry key="loadRetryWaitMsec" type="string">1000</entry>
+		<entry key="port" type="string">3000</entry>
+		<entry key="printDlgFindTimeOut" type="string">10000</entry>
+		<entry key="printDlgLeaveTimeOut" type="string">3</entry>
+		<entry key="printDlgName" type="string">印刷|進行状況</entry>
+		<entry key="printDlgStayingTimeCheck" type="string">60000</entry>
+		<entry key="printFormTimerInterval" type="string">100</entry>
+		<entry key="printProcessThreadWaitMsec" type="string">100</entry>
+		<entry key="printformbythread" type="string">auto</entry>
+		<entry key="queueSize" type="string">100</entry>
+		<entry key="responseTemplate" type="string">C:\ProgramData\brainsellers\DirectPrint\html\response.html</entry>
+		<entry key="spoolTimeOut" type="string">60000</entry>
+		<entry key="sppPass" type="string"></entry>
+		<entry key="tmpFolderPath" type="string">C:\ProgramData\brainsellers\DirectPrint\tmp</entry>
+	</section>
+</properties>

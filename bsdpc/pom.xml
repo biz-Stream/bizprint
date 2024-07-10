@@ -1,0 +1,206 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project
+	xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd'
+	xmlns='http://maven.apache.org/POM/4.0.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.brainsellers.bizstream</groupId>
+		<artifactId>parent</artifactId>
+		<version>5.2.0</version>
+		<relativePath>../parent</relativePath>
+	</parent>
+	<groupId>com.brainsellers.bizstream.wss</groupId>
+	<artifactId>bsdpc</artifactId>
+	<name>biz-Stream Web Services Server Client Library</name>
+	<dependencies>
+		<dependency>
+			<groupId>com.brainsellers.bizstream</groupId>
+			<artifactId>bspdf</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk18on</artifactId>
+			<version>${bouncycastle.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.lingala.zip4j</groupId>
+			<artifactId>zip4j</artifactId>
+			<version>${zip4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>${servlet.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<inherited>true</inherited>
+				<artifactId>maven-scm-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>checkout-bspdf-files1</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>checkout</goal>
+						</goals>
+						<configuration>
+							<connectionUrl>
+								${bizstream.scm.root}/modules/bspdf/${repo.version}/src/main/java/com/brainsellers/pdf
+							</connectionUrl>
+							<checkoutDirectory>
+								${project.build.directory}/work/java/com/brainsellers/pdf
+							</checkoutDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>checkout-bspdf-files2</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>checkout</goal>
+						</goals>
+						<configuration>
+							<connectionUrl>
+								${bizstream.scm.root}/modules/bspdf/${repo.version}/src/main/java/com/brainsellers/util
+							</connectionUrl>
+							<checkoutDirectory>
+								${project.build.directory}/work/java/com/brainsellers/util
+							</checkoutDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>checkout-bspdf-files3</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>checkout</goal>
+						</goals>
+						<configuration>
+							<connectionUrl>
+								${bizstream.scm.root}/modules/bspdf/${repo.version}/src/main/java/com/brainsellers/logger
+							</connectionUrl>
+							<checkoutDirectory>
+								${project.build.directory}/work/java/com/brainsellers/logger
+							</checkoutDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<inherited>true</inherited>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<copy
+									todir='${project.build.directory}/temp/java/com/brainsellers/pdf/print'>
+									<fileset
+										dir='${project.build.directory}/work/java/com/brainsellers/pdf/print'>
+										<include name='CreateEncryptSpp.java' />
+										<include name='PDFCommonPrintStream.java' />
+										<include name='PDFDirectPrintStream.java' />
+										<include name='PDFUrlTools.java' />
+									</fileset>
+								</copy>
+								<copy
+									todir='${project.build.directory}/temp/java/com/brainsellers/util'>
+									<fileset
+										dir='${project.build.directory}/work/java/com/brainsellers/util'>
+										<include name='DoubleOutputStream.java' />
+										<include name='BASE64.java' />
+									</fileset>
+								</copy>
+								<copy
+									todir='${project.build.directory}/temp/java/com/brainsellers/pdf'>
+									<fileset
+										dir='${project.build.directory}/work/java/com/brainsellers/pdf'>
+										<include name='PDFRuntimeException.java' />
+									</fileset>
+								</copy>
+								<replace dir='${project.build.directory}/temp/java'
+									includes='**/PDFRuntimeException.java'
+									token='PDF.getProperty(&quot;error.handling&quot;).equalsIgnoreCase(&quot;throw&quot;)'
+									value='true' />
+								<copy
+									todir='${project.build.directory}/temp/java/com/brainsellers/pdf/internal'>
+									<fileset
+										dir='${project.build.directory}/work/java/com/brainsellers/pdf/internal'>
+										<include name='PDFEncryptOutputStream.java' />
+										<include name='PDFTrackedOutputStream.java' />
+										<include name='PDFMessages.java' />
+										<include name='PDFProperties.java' />
+									</fileset>
+								</copy>
+								<copy
+									todir='${project.build.directory}/temp/java/com/brainsellers/logger'>
+									<fileset
+										dir='${project.build.directory}/work/java/com/brainsellers/logger'>
+										<include name='MessageHandler.java' />
+									</fileset>
+								</copy>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source> ${project.build.directory}/temp/java </source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<verify>false</verify>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jarsigner-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>sign</id>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>verify</id>
+						<goals>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

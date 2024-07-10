@@ -1,0 +1,64 @@
+﻿<html>
+<head>
+    <link rel="shortcut icon" href="favicon.ico" />
+    <script language="JavaScript">
+		<!--
+			self.name="tg";
+			function nscape(){
+				window.focus();
+				win = window.open("$$$REPLACE_url$$$?$$$REPLACE_sbl_ns$$$","$$$REPLACE_target$$$");
+				tg = window.open("about:blank","tg");
+				self.close();
+				return;
+			}
+			function iexp(){
+				window.focus();
+				document.bizForm.action = "$$$REPLACE_url$$$";
+				document.bizForm.submit();
+				self.opener=self;
+				self.close();
+				return;
+			}
+			function ie7xp(){
+				window.focus();
+				document.bizForm.action = "$$$REPLACE_url$$$";
+				document.bizForm.submit();
+				(window.open('','_top').opener=top).close();
+				return;
+			}
+
+			str = navigator.appName.toUpperCase();
+			ver = navigator.appVersion.toUpperCase();
+			if (str.indexOf("NETSCAPE") >= 0 ) {
+				if(ver.indexOf("TRIDENT") >= 0) {
+					window.onload = ie7xp;
+				} else if(ver.indexOf("EDGE") >= 0) {
+					window.onload = ie7xp;
+				} else {
+					window.onload = nscape;
+				}
+			} else {
+				if (str.indexOf("EXPLORER") >= 0 ) {
+					if (	(ver.indexOf("MSIE 7") >= 0)
+						|| (ver.indexOf("MSIE 8") >= 0)
+						|| (ver.indexOf("MSIE 9") >= 0)
+						|| (ver.indexOf("MSIE 1") >= 0) ) {
+						window.onload = ie7xp;
+					} else {
+						window.onload = iexp;
+					}
+				}
+			}
+		// -->
+    </script>
+</head>
+<body>
+    <FORM NAME="bizForm" method="GET" TARGET="$$$REPLACE_target$$$">
+        $$$REPLACE_param$$$
+    </FORM>
+</body>
+<head>
+    <META HTTP-EQUIV="Expires" CONTENT="-1">
+</head>
+</html>
+

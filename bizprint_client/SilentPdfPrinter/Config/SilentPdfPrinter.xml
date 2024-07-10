@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+	<section key="Application">
+		<entry key="concurrentconnectionsmax" type="string">5</entry>
+		<entry key="deletefile" type="string">true</entry>
+		<entry key="directprinthost" type="string">127.0.0.1</entry>
+		<entry key="maxprocessnum" type="string">10</entry>
+		<entry key="port" type="string">3000</entry>
+		<entry key="processname" type="string">DirectPrintService</entry>
+		<entry key="retry" type="string">5</entry>
+		<entry key="retryinterval" type="string">5000</entry>
+		<entry key="timeout" type="string">20000</entry>
+		<entry key="waitloopmsec" type="string">1000</entry>
+	</section>
+</properties>

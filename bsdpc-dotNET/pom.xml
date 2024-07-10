@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.brainsellers.bizstream</groupId>
+		<artifactId>parent</artifactId>
+		<version>5.2.0</version>
+		<relativePath>../parent</relativePath>
+	</parent>
+	<groupId>com.brainsellers.bizstream.wss</groupId>
+	<artifactId>bsdpc-dotNET</artifactId>
+	<version>5.2.0</version>
+	<packaging>pom</packaging>
+	<name>biz-Stream Web Services Server Client Library</name>
+	<build>
+		<plugins>
+			<plugin>
+				<inherited>true</inherited>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<exec osfamily="windows" failonerror="true" executable="ruby">
+									<arg line="modSln.rb" />
+								</exec>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<repositoryId>central</repositoryId>
+					<url>http://bsbuild/artifactory/libs-releases-local</url>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>${project.artifactId}</artifactId>
+					<version>${project.version}</version>
+					<packaging>dll</packaging>
+					<file>src\bin\Release\bsdpc.dll</file>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
