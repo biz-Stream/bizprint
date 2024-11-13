@@ -1,0 +1,75 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.brainsellers.bizstream.bizprint</groupId>
+	<artifactId>bizprint-parent</artifactId>
+	<version>1.0.0</version>
+	<packaging>pom</packaging>
+	<name>bizprint Parent Project</name>
+
+	<modules>
+		<module>../bsdpc</module>
+		<module>../bsdpc-dotNET</module>
+		<module>../bizprint_client</module>
+		<!-- 他のサブプロジェクトを順番に追加 -->
+	</modules>
+
+	<!-- 暗号化キーを固定したい場合はここでセットする -->
+	<!--
+    <properties>
+        <randomString1>aaaa</randomString1>
+        <randomString2>bbbb</randomString2>
+    </properties>
+    -->
+
+	<build>
+		<plugins>
+            <!-- Antrunプラグインで複数のランダム文字列を生成 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                    	<id>random-string-generation</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                        	<exportAntProperties>true</exportAntProperties>
+                            <tasks>
+                                <!-- JavaScript (Nashorn) で2つのランダム文字列を生成 -->
+                                <script language="javascript">
+                                  // ランダム文字列の生成
+                                  var randomString1 = java.util.UUID.randomUUID().toString().replace(/-/g, "").substring(0, 10);
+                                  var randomString2 = java.util.UUID.randomUUID().toString().replace(/-/g, "").substring(0, 12);
+
+                                  // Mavenプロパティに設定
+                                  project.setProperty("randomString1", randomString1);
+                                  project.setProperty("randomString2", randomString2);
+
+                                  // コンソールに出力
+                                  print("Generated random string 1: " + randomString1);
+                                  print("Generated random string 2: " + randomString2);
+                                </script>
+
+                                <!-- 生成されたランダム文字列をログに出力 -->
+                                <echo message="Generated random string 1: ${randomString1}" />
+                                <echo message="Generated random string 2: ${randomString2}" />
+
+                                <!-- 生成されたプロパティをファイルに出力 -->
+                                <echo file="target/generated-props.properties">
+                                	randomString1=${randomString1}
+									randomString2=${randomString2}
+                                </echo>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+		</plugins>
+	</build>
+</project>

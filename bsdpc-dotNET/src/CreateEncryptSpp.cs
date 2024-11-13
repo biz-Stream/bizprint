@@ -13,10 +13,10 @@ namespace DirectPrintClientModule
     public class CreateEncryptSpp
     {
         /// <summary>sppパスワード固定部分前半</summary>
-        const String constPassBefore = "xxxxxxxxxx";
+        const String constPassBefore = "___RANDOM_STRINGS1___";
 
         /// <summary>sppパスワード固定部分後半</summary>
-        const String constPassAfter = "xxxxxxxxxx";
+        const String constPassAfter = "___RANDOM_STRINGS2___";
 
         /// <summary>sppパスワード全体</summary>
         private String sppPassword = constPassBefore + constPassAfter;
