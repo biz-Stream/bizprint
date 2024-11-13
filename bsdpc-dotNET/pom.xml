@@ -2,18 +2,185 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.brainsellers.bizstream</groupId>
-		<artifactId>parent</artifactId>
-		<version>5.2.0</version>
-		<relativePath>../parent</relativePath>
+		<groupId>com.brainsellers.bizstream.bizprint</groupId>
+		<artifactId>bizprint-parent</artifactId>
+		<version>1.0.0</version>
+		<relativePath>../build/pom.xml</relativePath>
 	</parent>
-	<groupId>com.brainsellers.bizstream.wss</groupId>
-	<artifactId>bsdpc-dotNET</artifactId>
-	<version>5.2.0</version>
+	<groupId>com.brainsellers.bizstream.bizprint</groupId>
+	<artifactId>bsdpc-csharp-oss</artifactId>
+	<name>bizprint Server Library (C#)</name>
+	<version>1.0.0</version>
 	<packaging>pom</packaging>
-	<name>biz-Stream Web Services Server Client Library</name>
 	<build>
 		<plugins>
+            <!-- properties-maven-plugin でプロパティファイルを読み込む -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <!-- 親モジュールで生成されたプロパティファイルを読み込む -->
+                                <file>${project.parent.basedir}/target/generated-props.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- サブモジュール側でログ出力 (ランダム文字列生成は行わない) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>random-string-generation</id> <!-- 親で設定されているexecution IDを指定 -->
+                        <phase>none</phase> <!-- このプラグインを無効化 -->
+                    </execution>
+                    <execution>
+                        <phase>validate</phase> <!-- validateフェーズでプロパティをログに出力 -->
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <!-- 読み込んだプロパティをログに出力 -->
+                                <echo message="Submodule - Random String 1: ${randomString1}" />
+                                <echo message="Submodule - Random String 2: ${randomString2}" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                    	<id>replace-random-strings</id>
+                        <phase>generate-sources</phase> <!-- ソース生成の前に実行 -->
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                        	<exportAntProperties>true</exportAntProperties>
+                            <tasks>
+                                <!-- プロジェクトのソースディレクトリをコピー -->
+                                <mkdir dir="${project.build.directory}/temp-src"/>
+                                <copy todir="${project.build.directory}/temp-src">
+                                    <!--<fileset dir="${project.build.sourceDirectory}"/>-->
+                                    <fileset dir="${project.basedir}/src"/>
+                                </copy>
+
+                                <!-- コピーされたファイルを確認 -->
+                                <echo>
+                                    Copied source files to: ${project.build.directory}/temp-src
+                                </echo>
+
+                                <!-- 置換処理：テンポラリディレクトリ内のファイルを置換 -->
+                                <replace file="${project.build.directory}/temp-src/CreateEncryptSpp.cs"
+                                         token="___RANDOM_STRINGS1___" value="${randomString1}"/>
+                                <replace file="${project.build.directory}/temp-src/CreateEncryptSpp.cs"
+                                         token="___RANDOM_STRINGS2___" value="${randomString2}"/>
+
+                                <!-- プロパティのデバッグ出力 -->
+                                <echo>
+                                    project.build.sourceDirectory: ${project.build.sourceDirectory}
+                                </echo>
+                                <echo>
+                                    project.build.outputDirectory: ${project.build.outputDirectory}
+                                </echo>
+
+                                <!-- コピーしたテンポラリフォルダのパスをMavenプロパティに設定 -->
+                                <property name="build.srcDirectory" value="${project.build.directory}/temp-src"/>
+                             </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- maven-resources-pluginでプロパティを使用する -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${build.srcDirectory}</directory>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                    <excludes>
+                                        <!-- Javaソースファイルを除外 -->
+                                        <exclude>**/*.java</exclude>
+                                    </excludes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+			<!-- MsBuildでビルド -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>build-csharp-project</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>MSBuild.exe</executable>
+							<arguments>
+								<argument>src/DirectPrintClientModule.csproj</argument>
+								<argument>/p:Configuration=Release</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- src/bin/Releaseフォルダに出来た成果物をtargetへコピー -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>copy-release-files</id>
+						<phase>install</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/bin/Release</directory>
+									<includes>
+										<include>**/*</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+<!--
 			<plugin>
 				<inherited>true</inherited>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -33,6 +200,8 @@
 					</execution>
 				</executions>
 			</plugin>
+-->
+<!--
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
@@ -46,6 +215,7 @@
 					<file>src\bin\Release\bsdpc.dll</file>
 				</configuration>
 			</plugin>
+-->
 		</plugins>
 	</build>
 </project>

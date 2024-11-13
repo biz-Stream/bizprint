@@ -3,204 +3,149 @@
 	xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd'
 	xmlns='http://maven.apache.org/POM/4.0.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
-		<groupId>com.brainsellers.bizstream</groupId>
-		<artifactId>parent</artifactId>
-		<version>5.2.0</version>
-		<relativePath>../parent</relativePath>
+		<groupId>com.brainsellers.bizstream.bizprint</groupId>
+		<artifactId>bizprint-parent</artifactId>
+		<version>1.0.0</version>
+		<relativePath>../build/pom.xml</relativePath>
 	</parent>
-	<groupId>com.brainsellers.bizstream.wss</groupId>
-	<artifactId>bsdpc</artifactId>
-	<name>biz-Stream Web Services Server Client Library</name>
+
+	<groupId>com.brainsellers.bizstream.bizprint</groupId>
+	<artifactId>bsdpc-java-oss</artifactId>
+	<name>bizprint Server Library (Java)</name>
+	<version>1.0.0</version>
 	<dependencies>
-		<dependency>
-			<groupId>com.brainsellers.bizstream</groupId>
-			<artifactId>bspdf</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk18on</artifactId>
-			<version>${bouncycastle.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>net.lingala.zip4j</groupId>
 			<artifactId>zip4j</artifactId>
-			<version>${zip4j.version}</version>
+			<version>2.11.3</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
-			<version>${servlet.version}</version>
+			<version>2.3</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
+
 	<build>
 		<plugins>
-			<plugin>
-				<inherited>true</inherited>
-				<artifactId>maven-scm-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>checkout-bspdf-files1</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>checkout</goal>
-						</goals>
-						<configuration>
-							<connectionUrl>
-								${bizstream.scm.root}/modules/bspdf/${repo.version}/src/main/java/com/brainsellers/pdf
-							</connectionUrl>
-							<checkoutDirectory>
-								${project.build.directory}/work/java/com/brainsellers/pdf
-							</checkoutDirectory>
-						</configuration>
-					</execution>
-					<execution>
-						<id>checkout-bspdf-files2</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>checkout</goal>
-						</goals>
-						<configuration>
-							<connectionUrl>
-								${bizstream.scm.root}/modules/bspdf/${repo.version}/src/main/java/com/brainsellers/util
-							</connectionUrl>
-							<checkoutDirectory>
-								${project.build.directory}/work/java/com/brainsellers/util
-							</checkoutDirectory>
-						</configuration>
-					</execution>
-					<execution>
-						<id>checkout-bspdf-files3</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>checkout</goal>
-						</goals>
-						<configuration>
-							<connectionUrl>
-								${bizstream.scm.root}/modules/bspdf/${repo.version}/src/main/java/com/brainsellers/logger
-							</connectionUrl>
-							<checkoutDirectory>
-								${project.build.directory}/work/java/com/brainsellers/logger
-							</checkoutDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<inherited>true</inherited>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<copy
-									todir='${project.build.directory}/temp/java/com/brainsellers/pdf/print'>
-									<fileset
-										dir='${project.build.directory}/work/java/com/brainsellers/pdf/print'>
-										<include name='CreateEncryptSpp.java' />
-										<include name='PDFCommonPrintStream.java' />
-										<include name='PDFDirectPrintStream.java' />
-										<include name='PDFUrlTools.java' />
-									</fileset>
-								</copy>
-								<copy
-									todir='${project.build.directory}/temp/java/com/brainsellers/util'>
-									<fileset
-										dir='${project.build.directory}/work/java/com/brainsellers/util'>
-										<include name='DoubleOutputStream.java' />
-										<include name='BASE64.java' />
-									</fileset>
-								</copy>
-								<copy
-									todir='${project.build.directory}/temp/java/com/brainsellers/pdf'>
-									<fileset
-										dir='${project.build.directory}/work/java/com/brainsellers/pdf'>
-										<include name='PDFRuntimeException.java' />
-									</fileset>
-								</copy>
-								<replace dir='${project.build.directory}/temp/java'
-									includes='**/PDFRuntimeException.java'
-									token='PDF.getProperty(&quot;error.handling&quot;).equalsIgnoreCase(&quot;throw&quot;)'
-									value='true' />
-								<copy
-									todir='${project.build.directory}/temp/java/com/brainsellers/pdf/internal'>
-									<fileset
-										dir='${project.build.directory}/work/java/com/brainsellers/pdf/internal'>
-										<include name='PDFEncryptOutputStream.java' />
-										<include name='PDFTrackedOutputStream.java' />
-										<include name='PDFMessages.java' />
-										<include name='PDFProperties.java' />
-									</fileset>
-								</copy>
-								<copy
-									todir='${project.build.directory}/temp/java/com/brainsellers/logger'>
-									<fileset
-										dir='${project.build.directory}/work/java/com/brainsellers/logger'>
-										<include name='MessageHandler.java' />
-									</fileset>
-								</copy>
-							</tasks>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>add-source</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source> ${project.build.directory}/temp/java </source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<verify>false</verify>
-					<archive>
-						<addMavenDescriptor>false</addMavenDescriptor>
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jarsigner-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>sign</id>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>verify</id>
-						<goals>
-							<goal>verify</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+            <!-- properties-maven-plugin でプロパティファイルを読み込む -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <!-- 親モジュールで生成されたプロパティファイルを読み込む -->
+                                <file>${project.parent.basedir}/target/generated-props.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- サブモジュール側でログ出力 (ランダム文字列生成は行わない) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>random-string-generation</id> <!-- 親で設定されているexecution IDを指定 -->
+                        <phase>none</phase> <!-- このプラグインを無効化 -->
+                    </execution>
+                    <execution>
+                        <phase>validate</phase> <!-- validateフェーズでプロパティをログに出力 -->
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <!-- 読み込んだプロパティをログに出力 -->
+                                <echo message="Submodule - Random String 1: ${randomString1}" />
+                                <echo message="Submodule - Random String 2: ${randomString2}" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                    	<id>replace-random-strings</id>
+                        <phase>generate-sources</phase> <!-- ソース生成の前に実行 -->
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                        	<exportAntProperties>true</exportAntProperties>
+                            <tasks>
+                                <!-- プロジェクトのソースディレクトリをコピー -->
+                                <mkdir dir="${project.build.directory}/temp-src"/>
+                                <copy todir="${project.build.directory}/temp-src">
+                                    <fileset dir="${project.build.sourceDirectory}"/>
+                                </copy>
+
+                                <!-- コピーされたファイルを確認 -->
+                                <echo>
+                                    Copied source files to: ${project.build.directory}/temp-src
+                                </echo>
+
+                                <!-- 置換処理：テンポラリディレクトリ内のファイルを置換 -->
+                                <replace file="${project.build.directory}/temp-src/com/brainsellers/bizstream/bizprint/CreateEncryptSpp.java"
+                                         token="___RANDOM_STRINGS1___" value="${randomString1}"/>
+                                <replace file="${project.build.directory}/temp-src/com/brainsellers/bizstream/bizprint/CreateEncryptSpp.java"
+                                         token="___RANDOM_STRINGS2___" value="${randomString2}"/>
+
+                                <!-- プロパティのデバッグ出力 -->
+                                <echo>
+                                    project.build.sourceDirectory: ${project.build.sourceDirectory}
+                                </echo>
+                                <echo>
+                                    project.build.outputDirectory: ${project.build.outputDirectory}
+                                </echo>
+
+                                <!-- コピーしたテンポラリフォルダのパスをMavenプロパティに設定 -->
+                                <property name="build.srcDirectory" value="${project.build.directory}/temp-src"/>
+                             </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- maven-resources-pluginでプロパティを使用する -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${build.srcDirectory}</directory>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                    <excludes>
+                                        <!-- Javaソースファイルを除外 -->
+                                        <exclude>**/*.java</exclude>
+                                    </excludes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 </project>
