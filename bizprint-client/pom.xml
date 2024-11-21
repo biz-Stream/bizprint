@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright 2024 BrainSellers.com Corporation
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.brainsellers.bizstream.bizprint</groupId>
+        <artifactId>bizprint-parent</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../build/pom.xml</relativePath>
+    </parent>
+
+    <groupId>com.brainsellers.bizstream.bizprint</groupId>
+    <artifactId>bizprint-client</artifactId>
+    <name>bizprint Client Applications</name>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <build>
+        <plugins>
+            <!-- properties-maven-plugin でプロパティファイルを読み込む -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <!-- 親モジュールで生成されたプロパティファイルを読み込む -->
+                                <file>${project.parent.basedir}/target/generated-props.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- サブモジュール側でログ出力 (ランダム文字列生成は行わない) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>random-string-generation</id> <!-- 親で設定されているexecution IDを指定 -->
+                        <phase>none</phase> <!-- このプラグインを無効化 -->
+                    </execution>
+                    <execution>
+                        <phase>validate</phase> <!-- validateフェーズでプロパティをログに出力 -->
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <!-- 読み込んだプロパティをログに出力 -->
+                                <echo message="Submodule - Random String 1: ${randomString1}" />
+                                <echo message="Submodule - Random String 2: ${randomString2}" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>replace-random-strings</id>
+                        <phase>generate-sources</phase> <!-- ソース生成の前に実行 -->
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <exportAntProperties>true</exportAntProperties>
+                            <tasks>
+                                <!-- プロジェクトのソースディレクトリをコピー -->
+                                <mkdir dir="${project.build.directory}/temp-src"/>
+                                <copy todir="${project.build.directory}/temp-src">
+                                    <!--<fileset dir="${project.build.sourceDirectory}"/>-->
+                                    <fileset dir="${project.basedir}/src"/>
+                                </copy>
+
+                                <!-- コピーされたファイルを確認 -->
+                                <echo>
+                                    Copied source files to: ${project.build.directory}/temp-src
+                                </echo>
+
+                                <!-- 置換処理：テンポラリディレクトリ内のファイルを置換 -->
+                                <replace file="${project.build.directory}/temp-src/BizPrintCommon/CommonConstants.cs"
+                                         token="___RANDOM_STRINGS1___" value="${randomString1}"/>
+                                <replace file="${project.build.directory}/temp-src/BizPrintCommon/CommonConstants.cs"
+                                         token="___RANDOM_STRINGS2___" value="${randomString2}"/>
+                                <replace file="${project.build.directory}/temp-src/SppFileExtractTool/SppExtracorForTool.cs"
+                                         token="___RANDOM_STRINGS1___" value="${randomString1}"/>
+                                <replace file="${project.build.directory}/temp-src/SppFileExtractTool/SppExtracorForTool.cs"
+                                         token="___RANDOM_STRINGS2___" value="${randomString2}"/>
+
+                                <!-- プロパティのデバッグ出力 -->
+                                <echo>
+                                    project.build.sourceDirectory: ${project.build.sourceDirectory}
+                                </echo>
+                                <echo>
+                                    project.build.outputDirectory: ${project.build.outputDirectory}
+                                </echo>
+
+                                <!-- コピーしたテンポラリフォルダのパスをMavenプロパティに設定 -->
+                                <property name="build.srcDirectory" value="${project.build.directory}/temp-src"/>
+                             </tasks>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+
+            <!-- maven-resources-pluginでプロパティを使用する -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${build.srcDirectory}</directory>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                    <excludes>
+                                        <!-- Javaソースファイルを除外 -->
+                                        <exclude>**/*.java</exclude>
+                                    </excludes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <!-- MsBuildでビルド -->
+                    <execution>
+                        <id>build-csharp-project</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>MSBuild.exe</executable>
+                            <arguments>
+                                <argument>src/BizPrint-Client.sln</argument>
+                                <argument>/p:Configuration=Release</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <!-- InnoSetupでインストーラ作成 (BatchPrint) -->
+                    <execution>
+                        <id>generate-innosetup-installer-batch</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>ISCC.exe</executable>
+                            <arguments>
+                                <!-- Inno Setupのスクリプトファイルを指定 -->
+                                <argument>${build.srcDirectory}/BatchPrintInstaller/BatchPrint-OSS.iss</argument>
+                            </arguments>
+                            <successCodes>
+                                <successCode>0</successCode>
+                            </successCodes>
+                        </configuration>
+                    </execution>
+                    <!-- InnoSetupでインストーラ作成 (DirectPrint) -->
+                    <execution>
+                        <id>generate-innosetup-installer-direct</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>ISCC.exe</executable>
+                            <arguments>
+                                <!-- Inno Setupのスクリプトファイルを指定 -->
+                                <argument>${build.srcDirectory}/DirectPrintInstaller/DirectPrint-OSS.iss</argument>
+                            </arguments>
+                            <successCodes>
+                                <successCode>0</successCode>
+                            </successCodes>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+
+            <!-- src/bin/Releaseフォルダに出来た成果物をtargetへコピー -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-release-files</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${build.srcDirectory}/BizPrintCommon/bin/Release</directory>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${build.srcDirectory}/BatchPrintService/bin/Release</directory>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${build.srcDirectory}/BizPrintHealthChecker/bin/Release</directory>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${build.srcDirectory}/DirectPrintService/bin/Release</directory>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${build.srcDirectory}/SilentPdfPrinter/bin/Release</directory>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${build.srcDirectory}/SppFileExtractTool/bin/Release</directory>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${build.srcDirectory}/BatchPrintInstaller/Output</directory>
+                                    <includes>
+                                        <include>**/*.exe</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${build.srcDirectory}/DirectPrintInstaller/Output</directory>
+                                    <includes>
+                                        <include>**/*.exe</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.35130.168
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BizPrint-Server-CSharp", "BizPrint-Server-CSharp.csproj", "{8C0A3765-EF53-44E6-9774-1729796D5BEA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8C0A3765-EF53-44E6-9774-1729796D5BEA}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{8C0A3765-EF53-44E6-9774-1729796D5BEA}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{8C0A3765-EF53-44E6-9774-1729796D5BEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C0A3765-EF53-44E6-9774-1729796D5BEA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0CD4651B-0943-4074-B6EA-335D3AE847E2}
+	EndGlobalSection
+EndGlobal

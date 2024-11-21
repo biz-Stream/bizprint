@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright 2024 BrainSellers.com Corporation
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<properties>
+    <section key="Application">
+        <entry key="concurrentconnectionsmax" type="string">5</entry>
+        <entry key="deletefile" type="string">true</entry>
+        <entry key="directprinthost" type="string">127.0.0.1</entry>
+        <entry key="maxprocessnum" type="string">10</entry>
+        <entry key="port" type="string">3000</entry>
+        <entry key="processname" type="string">DirectPrintService</entry>
+        <entry key="retry" type="string">5</entry>
+        <entry key="retryinterval" type="string">5000</entry>
+        <entry key="timeout" type="string">20000</entry>
+        <entry key="waitloopmsec" type="string">1000</entry>
+    </section>
+</properties>
