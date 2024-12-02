@@ -20,13 +20,15 @@
 ; プログラム名
 #define MyAppName "biz-Stream ダイレクト印刷 (OSS)"
 ; プログラムのバージョン
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.0.0"
 ; 会社やサイトなど
-#define MyAppPublisher "bizprint Project"
+#define MyAppPublisher "ブレインセラーズ・ドットコム株式会社"
 ; プログラムを提供するURLなど
 #define MyAppURL "https://github.com/biz-Stream/bizprint"
 ; プログラムの実行ファイル名
 #define MyAppExeName "DirectPrintService.exe"
+; インストーラのファイル名 (バージョン番号と.exeより前の部分)
+#define MyOutputBaseName "DirectPrint-OSS-Setup"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -47,6 +49,24 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf32}\brainsellers\DirectPrint
 DefaultGroupName={#MyAppName}
 ;PrivilegesRequired=admin
+
+;-------------------------------------------------------------------------
+; インストーラのファイルプロパティ
+;-------------------------------------------------------------------------
+; ファイルの説明
+VersionInfoDescription={#MyAppName} Installer
+; ファイルバージョン
+VersionInfoVersion={#MyAppVersion}
+; 製品名
+VersionInfoProductName={#MyAppName}
+; 製品バージョン
+VersionInfoProductVersion={#MyAppVersion}
+; 会社名
+VersionInfoCompany={#MyAppPublisher}
+; 著作権
+VersionInfoCopyright={#MyAppPublisher}
+; 元のファイル名
+VersionInfoOriginalFilename={#MyOutputBaseName}-{#MyAppVersion}.exe
 
 ;-------------------------------------------------------------------------
 ; ウィザード画面の表示に関わる定義
@@ -78,7 +98,7 @@ DisableFinishedPage = no
 ; コンパイル後のインストーラファイルの出力先フォルダ
 ;OutputDir=C:\work\is\output
 ; コンパイル後のインストーラファイルのファイル名(.exeの前)
-OutputBaseFilename=DirectPrint-OSS-Setup
+OutputBaseFilename={#MyOutputBaseName}-{#MyAppVersion}
 ; インストール時のインストーラアイコンの設定
 ;SetupIconFile=C:\work\is\Setup.ico
 ; パスワード入力を表示する場合はこの設定が必要

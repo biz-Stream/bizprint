@@ -18,13 +18,13 @@ using System.Runtime.InteropServices;
 // アセンブリに関する一般情報は以下の属性セットをとおして制御されます。
 // アセンブリに関連付けられている情報を変更するには、
 // これらの属性値を変更してください。
-[assembly: AssemblyTitle("BizPrintCommonDll")]
+[assembly: AssemblyTitle("BizPrint Common DLL")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ブレインセラーズ・ドットコム株式会社")]
-[assembly: AssemblyProduct("biz-Stream ダイレクト・バッチ印刷")]
-[assembly: AssemblyCopyright("ブレインセラーズ・ドットコム株式会社  All rights reserved.")]
-[assembly: AssemblyTrademark("ブレインセラーズ・ドットコム株式会社")]
+[assembly: AssemblyProduct("BizPrint Common DLL")]
+[assembly: AssemblyCopyright("ブレインセラーズ・ドットコム株式会社")]
+[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // ComVisible を false に設定すると、その型はこのアセンブリ内で COM コンポーネントから 

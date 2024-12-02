@@ -23,8 +23,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ブレインセラーズ・ドットコム株式会社")]
 [assembly: AssemblyProduct("biz-Stream ダイレクト印刷")]
-[assembly: AssemblyCopyright("ブレインセラーズ・ドットコム株式会社  All rights reserved.")]
-[assembly: AssemblyTrademark("ブレインセラーズ・ドットコム株式会社")]
+[assembly: AssemblyCopyright("ブレインセラーズ・ドットコム株式会社")]
+[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // ComVisible を false に設定すると、その型はこのアセンブリ内で COM コンポーネントから 

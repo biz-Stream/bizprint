@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ブレインセラーズ・ドットコム株式会社")]
 [assembly: AssemblyProduct("BizPrintHealthChecker")]
-[assembly: AssemblyCopyright("Copyright © ブレインセラーズ・ドットコム株式会社 2021")]
+[assembly: AssemblyCopyright("ブレインセラーズ・ドットコム株式会社")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -46,4 +46,3 @@ using System.Runtime.InteropServices;
 // 既定値にすることができます:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
