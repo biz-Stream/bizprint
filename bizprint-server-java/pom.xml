@@ -16,7 +16,8 @@
 -->
 <project
     xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd'
-    xmlns='http://maven.apache.org/POM/4.0.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+    xmlns='http://maven.apache.org/POM/4.0.0'
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -102,9 +103,9 @@
                             <exportAntProperties>true</exportAntProperties>
                             <tasks>
                                 <!-- プロジェクトのソースディレクトリをコピー -->
-                                <mkdir dir="${project.build.directory}/temp-src"/>
+                                <mkdir dir="${project.build.directory}/temp-src" />
                                 <copy todir="${project.build.directory}/temp-src">
-                                    <fileset dir="${project.build.sourceDirectory}"/>
+                                    <fileset dir="${project.build.sourceDirectory}" />
                                 </copy>
 
                                 <!-- コピーされたファイルを確認 -->
@@ -113,10 +114,14 @@
                                 </echo>
 
                                 <!-- 置換処理：テンポラリディレクトリ内のファイルを置換 -->
-                                <replace file="${project.build.directory}/temp-src/com/brainsellers/bizstream/bizprint/CreateEncryptSpp.java"
-                                         token="___RANDOM_STRINGS1___" value="${randomString1}"/>
-                                <replace file="${project.build.directory}/temp-src/com/brainsellers/bizstream/bizprint/CreateEncryptSpp.java"
-                                         token="___RANDOM_STRINGS2___" value="${randomString2}"/>
+                                <replace
+                                    file="${project.build.directory}/temp-src/com/brainsellers/bizstream/bizprint/CreateEncryptSpp.java"
+                                    token="___RANDOM_STRINGS1___"
+                                    value="${randomString1}" />
+                                <replace
+                                    file="${project.build.directory}/temp-src/com/brainsellers/bizstream/bizprint/CreateEncryptSpp.java"
+                                    token="___RANDOM_STRINGS2___"
+                                    value="${randomString2}" />
 
                                 <!-- プロパティのデバッグ出力 -->
                                 <echo>
@@ -127,8 +132,8 @@
                                 </echo>
 
                                 <!-- コピーしたテンポラリフォルダのパスをMavenプロパティに設定 -->
-                                <property name="build.srcDirectory" value="${project.build.directory}/temp-src"/>
-                             </tasks>
+                                <property name="build.srcDirectory" value="${project.build.directory}/temp-src" />
+                            </tasks>
                         </configuration>
                     </execution>
                 </executions>
@@ -159,6 +164,63 @@
                                     </excludes>
                                 </resource>
                             </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 依存関係のライブラリもtargetに出力 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.0.2</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <!-- 依存関係の出力先を指定 -->
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <!-- 必要ならばスコープを指定 -->
+                            <includeScope>runtime</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- targetに出力されたjarファイルをまとめる -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>create-zip</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/assembly-zip.xml</descriptor>
+                            </descriptors>
+                            <appendAssemblyId>false</appendAssemblyId>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>create-tar-gz</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/assembly-tar-gz.xml</descriptor>
+                            </descriptors>
+                            <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                     </execution>
                 </executions>
