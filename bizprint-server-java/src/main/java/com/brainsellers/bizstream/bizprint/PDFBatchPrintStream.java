@@ -239,8 +239,8 @@ public class PDFBatchPrintStream extends PDFCommonPrintStream {
                 }
             }
             else {
-                LOGGER.severe("HTTP response(" + Integer.toString(response) + ") from Direct Print Server is not OK.");
-                throw new IOException("HTTP response(" + Integer.toString(response) + ") from Direct Print Server is not OK.");
+                LOGGER.severe("HTTP response(" + Integer.toString(response) + ") from Batch Print Server is not OK.");
+                throw new IOException("HTTP response(" + Integer.toString(response) + ") from Batch Print Server is not OK.");
             }
         }
         catch (IOException t) {

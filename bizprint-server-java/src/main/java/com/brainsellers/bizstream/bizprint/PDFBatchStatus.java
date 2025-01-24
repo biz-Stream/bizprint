@@ -157,72 +157,61 @@ public class PDFBatchStatus {
      */
     public void query(String jobId) throws IOException, BizPrintException, ParserConfigurationException, SAXException {
         createConnectUrl();
-//      try {
-            URL url = new URL(serverUrl);
+        URL url = new URL(serverUrl);
 
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoOutput(true);
-            connection.setDoInput(true);
-//          connection.setAllowUserInteraction(false);
-            connection.setRequestMethod("POST");
-//          connection.setInstanceFollowRedirects(false);
-//          connection.setRequestProperty("accept-Language", "ja;q=0.7,en;q=0.3");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setDoOutput(true);
+        connection.setDoInput(true);
+        connection.setRequestMethod("POST");
 
-            connection.connect();
+        connection.connect();
 
-            OutputStream output = connection.getOutputStream();
+        OutputStream output = connection.getOutputStream();
 
-            if (jobId != null) {
-                output.write(("jobID=" + encode(jobId)).getBytes());
+        if (jobId != null) {
+            output.write(("jobID=" + encode(jobId)).getBytes());
+        }
+        else {
+            output.write("jobID=".getBytes());
+        }
+
+        output.close();
+
+        int response = connection.getResponseCode();
+
+        if (response == 200) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder buf = new StringBuilder();
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                buf.append(decode(line));
             }
-            else {
-                output.write("jobID=".getBytes());
+
+            reader.close();
+
+            PDFCommonStatusParser parser = PDFCommonStatusParser.getInstance();
+
+//          logger.info(buf.toString());
+
+            //明示的に文字コードを指定 v5.0.0
+            parser.parse(new ByteArrayInputStream(buf.toString().getBytes("Windows-31j")));
+
+            result = parser.getResult();
+            errorCode = parser.getErrorCode();
+            errorCause = parser.getErrorCause();
+            errorDetails = parser.getErrorDetails();
+
+            for (Iterator iterator = parser.getPrintStatus().iterator(); iterator.hasNext(); ) {
+                PDFBatchPrintStatus status = (PDFBatchPrintStatus) iterator.next();
+                statusIndex.put(status.getJobId(), status);
+                statusArray.add(status);
             }
-
-            output.close();
-
-            int response = connection.getResponseCode();
-
-            if (response == 200) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                StringBuilder buf = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    buf.append(decode(line));
-                }
-
-                reader.close();
-
-                PDFCommonStatusParser parser = PDFCommonStatusParser.getInstance();
-
-//              logger.info(buf.toString());
-
-                //明示的に文字コードを指定 v5.0.0
-                parser.parse(new ByteArrayInputStream(buf.toString().getBytes("Windows-31j")));
-
-                result = parser.getResult();
-                errorCode = parser.getErrorCode();
-                errorCause = parser.getErrorCause();
-                errorDetails = parser.getErrorDetails();
-
-                for (Iterator iterator = parser.getPrintStatus().iterator(); iterator.hasNext(); ) {
-                    PDFBatchPrintStatus status = (PDFBatchPrintStatus) iterator.next();
-                    statusIndex.put(status.getJobId(), status);
-                    statusArray.add(status);
-                }
-            }
-            else {
-//              logger.error(PDFMessages.getMessage(1400, Integer.toString(response)));
-                LOGGER.severe("HTTP response(" + Integer.toString(response) + ") from Direct Print Server is not OK.");
-//              PDFRuntimeException.throwException(1400, PDFMessages.getMessage(1400, Integer.toString(response)), null);
-                throw new BizPrintException("HTTP response(" + Integer.toString(response) + ") from Direct Print Server is not OK.");
-            }
-//      }
-//      catch (Throwable t) {
-////            logger.error(PDFMessages.getMessage(1401, t.getLocalizedMessage()));
-////            PDFRuntimeException.throwException(1401, PDFMessages.getMessage(1401, t.getLocalizedMessage()), t);
-//      }
+        }
+        else {
+            LOGGER.severe("HTTP response(" + Integer.toString(response) + ") from Batch Print Server is not OK.");
+            throw new BizPrintException("HTTP response(" + Integer.toString(response) + ") from Batch Print Server is not OK.");
+        }
     }
 
     /**
