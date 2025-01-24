@@ -191,12 +191,9 @@ Name: "{commonappdata}\brainsellers\DirectPrint\tmp"; Permissions: everyone-full
 ; スタートメニューやデスクトップにショートカットアイコンを登録する設定
 ;-------------------------------------------------------------------------
 [Icons]
-;Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-;Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\GitHub"; Filename: "https://github.com/biz-Stream/bizprint"; WorkingDir: "{autoprograms}"
 Name: "{group}\設定フォルダ"; Filename: "{commonappdata}\brainsellers\DirectPrint"; WorkingDir: "{autoprograms}"
 Name: "{group}\{#MyAppName}のアンインストール"; Filename: "{uninstallexe}"; IconFilename: "{uninstallexe}"
-;Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 ;-------------------------------------------------------------------------
 ; レジストリ登録の設定
@@ -208,10 +205,6 @@ Root: HKCR; Subkey: ".spp"; ValueType: string; ValueName: ""; ValueData: "bizpri
 Root: HKCR; Subkey: "bizprint.sppfile"; ValueType: string; ValueName: ""; ValueData: "bizprint SilentPdfPrinter"; Flags: uninsdeletekey
 Root: HKCR; Subkey: "bizprint.sppfile\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: """{app}\SilentPdfPrinter.exe"",0"; Flags: uninsdeletekey
 Root: HKCR; Subkey: "bizprint.sppfile\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\SilentPdfPrinter.exe"" ""%1"""; Flags: uninsdeletekey
-
-;Root: HKCR; Subkey: "brainsellers.spp"; ValueType: dword; ValueName: "BrowserFlags"; ValueData: "8"; Flags: uninsdeletekey
-;Root: HKCR; Subkey: "brainsellers.spp"; ValueType: dword; ValueName: "EditFlags"; ValueData: "65536"; Flags: uninsdeletekey
-;Root: HKCR; Subkey: "brainsellers.spp\shell\Open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\SilentPdfPrinter.exe"" ""%1"""; Flags: uninsdeletekey
 
 ;-------------------------------------------------------------------------
 ; インストール時に実行するプログラムの設定
@@ -234,7 +227,7 @@ const
 var
   // カスタムページ
   CustomPage: TInputQueryWizardPage;
-  // カスタムページの入力フィールド(SPPパスワード、Base64エンコード済みSPPパスワード)
+  // カスタムページの入力フィールド(SPPファイル復号パスワード、Base64エンコード済みSPPファイル復号パスワード)
   //PortNo, SppPass, SppPassEncoded: String;
   SppPass, SppPassEncoded: String;
 
@@ -316,6 +309,39 @@ begin
       end;
     end;
   end;
+end;
+
+// SPPファイル復号パスワードのバリデーション関数
+function IsValidPassword(const Password: String): Boolean;
+var
+  I: Integer;
+  Ch: Char;
+begin
+  // パスワードが64文字以内か確認
+  if Length(Password) > 64 then
+  begin
+    Result := False;
+    Exit;
+  end;
+
+  // 1文字ずつ確認
+  for I := 1 to Length(Password) do
+  begin
+    Ch := Password[I]; // 現在の文字を取得
+
+    // 半角英数字と記号のみ許可
+    if not (((Ord(Ch) >= Ord('a')) and (Ord(Ch) <= Ord('z'))) or
+            ((Ord(Ch) >= Ord('A')) and (Ord(Ch) <= Ord('Z'))) or
+            ((Ord(Ch) >= Ord('0')) and (Ord(Ch) <= Ord('9'))) or
+            (Ch in ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '[', ']', '{', '}', '|', ':', ';', '"', '''', '<', '>', ',', '.', '?', '/'])) then
+    begin
+      Result := False;
+      Exit;
+    end;
+  end;
+
+  // すべての文字が条件を満たす場合
+  Result := True;
 end;
 
 // タスクスケジューラへ登録する関数
@@ -424,11 +450,11 @@ begin
   end;
   
   // Create the page
-  CustomPage := CreateInputQueryPage(wpSelectDir, 'SPPパスワードの設定', 'SPPパスワードを入力してください。', '');
+  CustomPage := CreateInputQueryPage(wpSelectDir, 'SPPファイル復号パスワードの設定', 'SPPファイル復号パスワードを入力してください。', '');
 
   // Add items (False means it's not a password edit)
   //CustomPage.Add('ポート番号:', False);
-  CustomPage.Add('SPPパスワード:', False);
+  CustomPage.Add('SPPファイル復号パスワード:', False);
 
   // Set initial values (optional)
   //CustomPage.Values[0] := '3000';
@@ -494,6 +520,14 @@ begin
     //  Result := False;  // ページ遷移をキャンセル
     //  Exit;
     //end;
+    
+    // SPPファイル復号パスワードチェック
+    if not IsValidPassword(SppPass) then
+    begin
+      MsgBox('SPPファイル復号パスワードは半角英数記号64文字以内で指定してください。', mbError, MB_OK);
+      Result := False;  // ページ遷移をキャンセル
+      Exit;
+    end;
   end;
 end;
 
@@ -512,7 +546,7 @@ begin
     // ReadyMemo にカスタム情報を追加して表示
     WizardForm.ReadyMemo.Lines.Add('');
     //WizardForm.ReadyMemo.Lines.Add('ポート番号: ' + PortNo);
-    WizardForm.ReadyMemo.Lines.Add('SPPパスワード: ' + SppPass);
+    WizardForm.ReadyMemo.Lines.Add('SPPファイル復号パスワード: ' + SppPass);
   end;
 end;
 
@@ -547,10 +581,10 @@ begin
         // ポート番号を置換
         //StringChangeEx(TempString, '<entry key="port" type="string">3000</entry>', '<entry key="port" type="string">' + PortNo + '</entry>', True);
 
-        // SPPパスワードをBase64にエンコード
+        // SPPファイル復号パスワードをBase64にエンコード
         SppPassEncoded := EncodeBase64(SppPass);
 
-        // SPPパスワードを置換
+        // SPPファイル復号パスワードを置換
         StringChangeEx(TempString, '<entry key="sppPass" type="string"></entry>', '<entry key="sppPass" type="string">' + SppPassEncoded + '</entry>', True);
         
         // responseTemplateを置換
@@ -619,7 +653,7 @@ begin
        
         // ログファイルパスを置換
         TmpPath := ExpandConstant('{commonappdata}\brainsellers\DirectPrint\log');
-        StringChangeEx(TempString, '<File value="C:\ProgramData\brainsellers\DirectPrint\log\BizPrintHealthChecker.log"></File>', '<File value="' + TmpPath + '\BizPrintHealthChecker.log"></File>', True);
+        StringChangeEx(TempString, '<File value="C:\ProgramData\brainsellers\BatchPrint\log\BizPrintHealthChecker.log"></File>', '<File value="' + TmpPath + '\BizPrintHealthChecker.log"></File>', True);
                      
         // 変更後の内容をTStringListに戻す
         XMLContent.Text := TempString;
