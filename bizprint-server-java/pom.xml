@@ -48,6 +48,9 @@
     </dependencies>
 
     <build>
+        <!-- 置換後のtemp-srcをソースディレクトリに設定 -->
+        <sourceDirectory>${project.build.directory}/temp-src</sourceDirectory>
+
         <plugins>
             <!-- properties-maven-plugin でプロパティファイルを読み込む -->
             <plugin>
@@ -105,7 +108,7 @@
                                 <!-- プロジェクトのソースディレクトリをコピー -->
                                 <mkdir dir="${project.build.directory}/temp-src" />
                                 <copy todir="${project.build.directory}/temp-src">
-                                    <fileset dir="${project.build.sourceDirectory}" />
+                                    <fileset dir="src/main/java" />
                                 </copy>
 
                                 <!-- コピーされたファイルを確認 -->
@@ -130,40 +133,7 @@
                                 <echo>
                                     project.build.outputDirectory: ${project.build.outputDirectory}
                                 </echo>
-
-                                <!-- コピーしたテンポラリフォルダのパスをMavenプロパティに設定 -->
-                                <property name="build.srcDirectory" value="${project.build.directory}/temp-src" />
                             </tasks>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- maven-resources-pluginでプロパティを使用する -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${build.srcDirectory}</directory>
-                                    <includes>
-                                        <include>**/*</include>
-                                    </includes>
-                                    <excludes>
-                                        <!-- Javaソースファイルを除外 -->
-                                        <exclude>**/*.java</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
                         </configuration>
                     </execution>
                 </executions>
