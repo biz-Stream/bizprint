@@ -169,7 +169,7 @@
                         <configuration>
                             <executable>MSBuild.exe</executable>
                             <arguments>
-                                <argument>src/BizPrint-Client.sln</argument>
+                                <argument>${build.srcDirectory}/BizPrint-Client.sln</argument>
                                 <argument>/p:Configuration=Release</argument>
                             </arguments>
                         </configuration>

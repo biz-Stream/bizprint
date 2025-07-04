@@ -1,4 +1,4 @@
-// Copyright 2024 BrainSellers.com Corporation
+ï»¿// Copyright 2024 BrainSellers.com Corporation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,24 +15,24 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// ƒAƒZƒ“ƒuƒŠ‚ÉŠÖ‚·‚éˆê”Êî•ñ‚ÍˆÈ‰º‚Ì‘®«ƒZƒbƒg‚ğ‚Æ‚¨‚µ‚Ä§Œä‚³‚ê‚Ü‚·B
-// ƒAƒZƒ“ƒuƒŠ‚ÉŠÖ˜A•t‚¯‚ç‚ê‚Ä‚¢‚éî•ñ‚ğ•ÏX‚·‚é‚É‚ÍA
-// ‚±‚ê‚ç‚Ì‘®«’l‚ğ•ÏX‚µ‚Ä‚­‚¾‚³‚¢B
-[assembly: AssemblyTitle("biz-Stream ƒoƒbƒ`ˆóü")]
+// ã‚¢ã‚»ãƒ³ãƒ–ãƒªã«é–¢ã™ã‚‹ä¸€èˆ¬æƒ…å ±ã¯ä»¥ä¸‹ã®å±æ€§ã‚»ãƒƒãƒˆã‚’ã¨ãŠã—ã¦åˆ¶å¾¡ã•ã‚Œã¾ã™ã€‚
+// ã‚¢ã‚»ãƒ³ãƒ–ãƒªã«é–¢é€£ä»˜ã‘ã‚‰ã‚Œã¦ã„ã‚‹æƒ…å ±ã‚’å¤‰æ›´ã™ã‚‹ã«ã¯ã€
+// ã“ã‚Œã‚‰ã®å±æ€§å€¤ã‚’å¤‰æ›´ã—ã¦ãã ã•ã„ã€‚
+[assembly: AssemblyTitle("biz-Stream ãƒãƒƒãƒå°åˆ·")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("ƒuƒŒƒCƒ“ƒZƒ‰[ƒYEƒhƒbƒgƒRƒ€Š”®‰ïĞ")]
-[assembly: AssemblyProduct("biz-Stream ƒoƒbƒ`ˆóü")]
-[assembly: AssemblyCopyright("ƒuƒŒƒCƒ“ƒZƒ‰[ƒYEƒhƒbƒgƒRƒ€Š”®‰ïĞ")]
+[assembly: AssemblyCompany("ãƒ–ãƒ¬ã‚¤ãƒ³ã‚»ãƒ©ãƒ¼ã‚ºãƒ»ãƒ‰ãƒƒãƒˆã‚³ãƒ æ ªå¼ä¼šç¤¾")]
+[assembly: AssemblyProduct("biz-Stream ãƒãƒƒãƒå°åˆ·")]
+[assembly: AssemblyCopyright("ãƒ–ãƒ¬ã‚¤ãƒ³ã‚»ãƒ©ãƒ¼ã‚ºãƒ»ãƒ‰ãƒƒãƒˆã‚³ãƒ æ ªå¼ä¼šç¤¾")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-// ComVisible ‚ğ false ‚Éİ’è‚·‚é‚ÆA‚»‚ÌŒ^‚Í‚±‚ÌƒAƒZƒ“ƒuƒŠ“à‚Å COM ƒRƒ“ƒ|[ƒlƒ“ƒg‚©‚ç 
-// QÆ•s‰Â”\‚É‚È‚è‚Ü‚·BCOM ‚©‚ç‚±‚ÌƒAƒZƒ“ƒuƒŠ“à‚ÌŒ^‚ÉƒAƒNƒZƒX‚·‚éê‡‚ÍA
-// ‚»‚ÌŒ^‚Ì ComVisible ‘®«‚ğ true ‚Éİ’è‚µ‚Ä‚­‚¾‚³‚¢B
+// ComVisible ã‚’ false ã«è¨­å®šã™ã‚‹ã¨ã€ãã®å‹ã¯ã“ã®ã‚¢ã‚»ãƒ³ãƒ–ãƒªå†…ã§ COM ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‹ã‚‰ 
+// å‚ç…§ä¸å¯èƒ½ã«ãªã‚Šã¾ã™ã€‚COM ã‹ã‚‰ã“ã®ã‚¢ã‚»ãƒ³ãƒ–ãƒªå†…ã®å‹ã«ã‚¢ã‚¯ã‚»ã‚¹ã™ã‚‹å ´åˆã¯ã€
+// ãã®å‹ã® ComVisible å±æ€§ã‚’ true ã«è¨­å®šã—ã¦ãã ã•ã„ã€‚
 [assembly: ComVisible(false)]
 
-// ‚±‚ÌƒvƒƒWƒFƒNƒg‚ª COM ‚ÉŒöŠJ‚³‚ê‚éê‡AŸ‚Ì GUID ‚ª typelib ‚Ì ID ‚É‚È‚è‚Ü‚·
+// ã“ã®ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆãŒ COM ã«å…¬é–‹ã•ã‚Œã‚‹å ´åˆã€æ¬¡ã® GUID ãŒ typelib ã® ID ã«ãªã‚Šã¾ã™
 [assembly: Guid("35ca96a3-b26c-4d53-bf26-5972aa2d9bff")]
 
 

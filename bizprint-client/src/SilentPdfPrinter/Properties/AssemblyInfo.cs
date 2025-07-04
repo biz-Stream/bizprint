@@ -1,4 +1,4 @@
-// Copyright 2024 BrainSellers.com Corporation
+ï»¿// Copyright 2024 BrainSellers.com Corporation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,35 +17,35 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// ƒAƒZƒ“ƒuƒŠ‚ÉŠÖ‚·‚éˆê”Êî•ñ‚ÍˆÈ‰º‚Ì‘®«ƒZƒbƒg‚ğ‚Æ‚¨‚µ‚Ä§Œä‚³‚ê‚Ü‚·B
-// ƒAƒZƒ“ƒuƒŠ‚ÉŠÖ˜A•t‚¯‚ç‚ê‚Ä‚¢‚éî•ñ‚ğ•ÏX‚·‚é‚É‚ÍA
-// ‚±‚ê‚ç‚Ì‘®«’l‚ğ•ÏX‚µ‚Ä‚­‚¾‚³‚¢B
+// ã‚¢ã‚»ãƒ³ãƒ–ãƒªã«é–¢ã™ã‚‹ä¸€èˆ¬æƒ…å ±ã¯ä»¥ä¸‹ã®å±æ€§ã‚»ãƒƒãƒˆã‚’ã¨ãŠã—ã¦åˆ¶å¾¡ã•ã‚Œã¾ã™ã€‚
+// ã‚¢ã‚»ãƒ³ãƒ–ãƒªã«é–¢é€£ä»˜ã‘ã‚‰ã‚Œã¦ã„ã‚‹æƒ…å ±ã‚’å¤‰æ›´ã™ã‚‹ã«ã¯ã€
+// ã“ã‚Œã‚‰ã®å±æ€§å€¤ã‚’å¤‰æ›´ã—ã¦ãã ã•ã„ã€‚
 [assembly: AssemblyTitle("SilentPdfPrinter")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("ƒuƒŒƒCƒ“ƒZƒ‰[ƒYEƒhƒbƒgƒRƒ€Š”®‰ïĞ")]
+[assembly: AssemblyCompany("ãƒ–ãƒ¬ã‚¤ãƒ³ã‚»ãƒ©ãƒ¼ã‚ºãƒ»ãƒ‰ãƒƒãƒˆã‚³ãƒ æ ªå¼ä¼šç¤¾")]
 [assembly: AssemblyProduct("SilentPdfPrinter")]
-[assembly: AssemblyCopyright("ƒuƒŒƒCƒ“ƒZƒ‰[ƒYEƒhƒbƒgƒRƒ€Š”®‰ïĞ")]
+[assembly: AssemblyCopyright("ãƒ–ãƒ¬ã‚¤ãƒ³ã‚»ãƒ©ãƒ¼ã‚ºãƒ»ãƒ‰ãƒƒãƒˆã‚³ãƒ æ ªå¼ä¼šç¤¾")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-// ComVisible ‚ğ false ‚Éİ’è‚·‚é‚ÆA‚»‚ÌŒ^‚Í‚±‚ÌƒAƒZƒ“ƒuƒŠ“à‚Å COM ƒRƒ“ƒ|[ƒlƒ“ƒg‚©‚ç 
-// QÆ•s‰Â”\‚É‚È‚è‚Ü‚·BCOM ‚©‚ç‚±‚ÌƒAƒZƒ“ƒuƒŠ“à‚ÌŒ^‚ÉƒAƒNƒZƒX‚·‚éê‡‚ÍA
-// ‚»‚ÌŒ^‚Ì ComVisible ‘®«‚ğ true ‚Éİ’è‚µ‚Ä‚­‚¾‚³‚¢B
+// ComVisible ã‚’ false ã«è¨­å®šã™ã‚‹ã¨ã€ãã®å‹ã¯ã“ã®ã‚¢ã‚»ãƒ³ãƒ–ãƒªå†…ã§ COM ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‹ã‚‰ 
+// å‚ç…§ä¸å¯èƒ½ã«ãªã‚Šã¾ã™ã€‚COM ã‹ã‚‰ã“ã®ã‚¢ã‚»ãƒ³ãƒ–ãƒªå†…ã®å‹ã«ã‚¢ã‚¯ã‚»ã‚¹ã™ã‚‹å ´åˆã¯ã€
+// ãã®å‹ã® ComVisible å±æ€§ã‚’ true ã«è¨­å®šã—ã¦ãã ã•ã„ã€‚
 [assembly: ComVisible(false)]
 
-// ‚±‚ÌƒvƒƒWƒFƒNƒg‚ª COM ‚ÉŒöŠJ‚³‚ê‚éê‡AŸ‚Ì GUID ‚ª typelib ‚Ì ID ‚É‚È‚è‚Ü‚·
+// ã“ã®ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆãŒ COM ã«å…¬é–‹ã•ã‚Œã‚‹å ´åˆã€æ¬¡ã® GUID ãŒ typelib ã® ID ã«ãªã‚Šã¾ã™
 [assembly: Guid("3370d44d-36e0-48b6-b568-82225d323092")]
 
-// ƒAƒZƒ“ƒuƒŠ‚Ìƒo[ƒWƒ‡ƒ“î•ñ‚ÍŸ‚Ì 4 ‚Â‚Ì’l‚Å\¬‚³‚ê‚Ä‚¢‚Ü‚·:
+// ã‚¢ã‚»ãƒ³ãƒ–ãƒªã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ±ã¯æ¬¡ã® 4 ã¤ã®å€¤ã§æ§‹æˆã•ã‚Œã¦ã„ã¾ã™:
 //
-//      ƒƒWƒƒ[ ƒo[ƒWƒ‡ƒ“
-//      ƒ}ƒCƒi[ ƒo[ƒWƒ‡ƒ“
-//      ƒrƒ‹ƒh”Ô†
+//      ãƒ¡ã‚¸ãƒ£ãƒ¼ ãƒãƒ¼ã‚¸ãƒ§ãƒ³
+//      ãƒã‚¤ãƒŠãƒ¼ ãƒãƒ¼ã‚¸ãƒ§ãƒ³
+//      ãƒ“ãƒ«ãƒ‰ç•ªå·
 //      Revision
 //
-// ‚·‚×‚Ä‚Ì’l‚ğw’è‚·‚é‚©A‰º‚Ì‚æ‚¤‚É '*' ‚ğg‚Á‚Äƒrƒ‹ƒh‚¨‚æ‚ÑƒŠƒrƒWƒ‡ƒ“”Ô†‚ğ 
-// Šù’è’l‚É‚·‚é‚±‚Æ‚ª‚Å‚«‚Ü‚·:
+// ã™ã¹ã¦ã®å€¤ã‚’æŒ‡å®šã™ã‚‹ã‹ã€ä¸‹ã®ã‚ˆã†ã« '*' ã‚’ä½¿ã£ã¦ãƒ“ãƒ«ãƒ‰ãŠã‚ˆã³ãƒªãƒ“ã‚¸ãƒ§ãƒ³ç•ªå·ã‚’ 
+// æ—¢å®šå€¤ã«ã™ã‚‹ã“ã¨ãŒã§ãã¾ã™:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 

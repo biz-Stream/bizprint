@@ -56,33 +56,58 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <exportAntProperties>true</exportAntProperties>
-                            <tasks>
-                                <!-- JavaScript (Nashorn) で2つのランダム文字列を生成 -->
-                                <script language="javascript">
-                                    // ランダム文字列の生成
-                                    var randomString1 = java.util.UUID.randomUUID().toString().replace(/-/g, "").substring(0, 10);
-                                    var randomString2 = java.util.UUID.randomUUID().toString().replace(/-/g, "").substring(0, 12);
+                            <target>
+                                <!-- プロパティが未定義のときのみランダム生成 -->
+                                <condition property="needGenerate" value="true" else="false">
+                                    <and>
+                                        <not><isset property="randomString1" /></not>
+                                        <not><isset property="randomString2" /></not>
+                                    </and>
+                                </condition>
 
-                                    // Mavenプロパティに設定
-                                    project.setProperty("randomString1", randomString1);
-                                    project.setProperty("randomString2", randomString2);
+                                <echo message="needGenerate = ${needGenerate}" />
 
-                                    // コンソールに出力
-                                    print("Generated random string 1: " + randomString1);
-                                    print("Generated random string 2: " + randomString2);
-                                </script>
+                                <!-- 出力先のクラス用ディレクトリを明示的に作成 -->
+                                <mkdir dir="target/classes" />
 
-                                <!-- 生成されたランダム文字列をログに出力 -->
-                                <echo message="Generated random string 1: ${randomString1}" />
-                                <echo message="Generated random string 2: ${randomString2}" />
+                                <!-- Javaファイルの保存先 -->
+                                <mkdir dir="target/generated-sources/com/brainsellers/util" />
 
-                                <!-- 生成されたプロパティをファイルに出力 -->
-                                <echo file="target/generated-props.properties">
-                                    randomString1=${randomString1}
-                                    randomString2=${randomString2}
+                                <!-- Javaクラスの内容をファイルとして書き出す -->
+                                <echo file="target/generated-sources/com/brainsellers/util/RandomStringGenerator.java">
+                                    <![CDATA[
+package com.brainsellers.util;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.UUID;
+
+public class RandomStringGenerator {
+    public static void main(String[] args) throws IOException {
+        String random1 = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+        String random2 = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
+
+        System.out.println("Generated random string 1: " + random1);
+        System.out.println("Generated random string 2: " + random2);
+
+        try (FileWriter writer = new FileWriter("target/generated-props.properties")) {
+            writer.write("randomString1=" + random1 + "\n");
+            writer.write("randomString2=" + random2 + "\n");
+        }
+    }
+}
+                                    ]]>
                                 </echo>
-                            </tasks>
+
+                                <!-- Javaクラスをコンパイル -->
+                                <javac srcdir="target/generated-sources"
+                                       destdir="target/classes" includeantruntime="false" />
+
+                                <!-- Javaクラスを実行 -->
+                                <java classname="com.brainsellers.util.RandomStringGenerator"
+                                      classpath="target/classes"
+                                      fork="true" />
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
