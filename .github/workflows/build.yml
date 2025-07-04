@@ -1,0 +1,32 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # 手動実行も可能
+
+jobs:
+  build:
+    name: Build on Windows Runner
+    runs-on: [self-hosted, windows-public-runner]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check Java version
+        run: java -version
+
+      - name: Build with Maven
+        run: mvn -f build/pom.xml clean install -B
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            bizprint-server-java/target/*.zip
+            bizprint-server-java/target/*.tar.gz
+            bizprint-server-csharp/target/*.zip
+            bizprint-client/target/BatchPrint-OSS-Setup-*.exe
+            bizprint-client/target/DirectPrint-OSS-Setup-*.exe
