@@ -30,6 +30,10 @@
     <version>1.0.0</version>
     <packaging>pom</packaging>
 
+    <properties>
+        <checkstyle.skip>true</checkstyle.skip>
+    </properties>
+
     <build>
         <plugins>
             <!-- properties-maven-plugin でプロパティファイルを読み込む -->

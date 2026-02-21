@@ -112,6 +112,35 @@ public class RandomStringGenerator {
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- CheckStyle: Java coding conventions -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.2.1</version>
+                <configuration>
+                    <configLocation>../config/checkstyle/checkstyle.xml</configLocation>
+                    <suppressionsLocation>../config/checkstyle/suppressions.xml</suppressionsLocation>
+                    <propertyExpansion>config_loc=${project.basedir}/../config/checkstyle</propertyExpansion>
+                    <sourceEncoding>UTF-8</sourceEncoding>
+                    <consoleOutput>false</consoleOutput>
+                    <failOnViolation>false</failOnViolation>
+                    <failsOnError>false</failsOnError>
+                    <linkXRef>false</linkXRef>
+                    <skip>${checkstyle.skip}</skip>
+                </configuration>
+            </plugin>
+
+            <!-- EditorConfig: file format validation -->
+            <plugin>
+                <groupId>org.ec4j.maven</groupId>
+                <artifactId>editorconfig-maven-plugin</artifactId>
+                <version>0.1.3</version>
+                <configuration>
+                    <failOnFormatViolation>false</failOnFormatViolation>
+                    <failOnNoMatchingProperties>false</failOnNoMatchingProperties>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

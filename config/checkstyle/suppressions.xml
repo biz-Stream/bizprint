@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<!--
+    bizprint CheckStyle Suppressions
+-->
+<suppressions>
+
+    <!-- package-private logger is a project convention -->
+    <suppress checks="ConstantName" message=".*logger.*"/>
+
+</suppressions>
