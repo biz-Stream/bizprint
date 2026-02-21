@@ -84,17 +84,13 @@ public class PDFJaxpStatusParser extends PDFCommonStatusParser {
 
             if (name.equalsIgnoreCase("Result")) {
                 result = getText(node);
-            }
-            else if (name.equalsIgnoreCase("ErrorCode")) {
+            } else if (name.equalsIgnoreCase("ErrorCode")) {
                 errorCode = getText(node);
-            }
-            else if (name.equalsIgnoreCase("ErrorCause")) {
+            } else if (name.equalsIgnoreCase("ErrorCause")) {
                 errorCause = getText(node);
-            }
-            else if (name.equalsIgnoreCase("ErrorDetails")) {
+            } else if (name.equalsIgnoreCase("ErrorDetails")) {
                 errorDetails = getText(node);
-            }
-            else if (name.equalsIgnoreCase("PrintStatus")) {
+            } else if (name.equalsIgnoreCase("PrintStatus")) {
                 parsePrintStatus(node);
             }
         }
@@ -121,26 +117,19 @@ public class PDFJaxpStatusParser extends PDFCommonStatusParser {
 
                 if (name.equalsIgnoreCase("JobName")) {
                     status.setJobName(getText(node));
-                }
-                else if (name.equalsIgnoreCase("PrinterName")) {
+                } else if (name.equalsIgnoreCase("PrinterName")) {
                     status.setPrinterName(getText(node));
-                }
-                else if (name.equalsIgnoreCase("DateTime")) {
+                } else if (name.equalsIgnoreCase("DateTime")) {
                     status.setDateTime(getText(node));
-                }
-                else if (name.equalsIgnoreCase("StatusCode")) {
+                } else if (name.equalsIgnoreCase("StatusCode")) {
                     status.setStatusCode(getText(node));
-                }
-                else if (name.equalsIgnoreCase("Status")) {
+                } else if (name.equalsIgnoreCase("Status")) {
                     status.setStatus(getText(node));
-                }
-                else if (name.equalsIgnoreCase("ErrorCode")) {
+                } else if (name.equalsIgnoreCase("ErrorCode")) {
                     status.setErrorCode(getText(node));
-                }
-                else if (name.equalsIgnoreCase("ErrorCause")) {
+                } else if (name.equalsIgnoreCase("ErrorCause")) {
                     status.setErrorCause(getText(node));
-                }
-                else if (name.equalsIgnoreCase("ErrorDetails")) {
+                } else if (name.equalsIgnoreCase("ErrorDetails")) {
                     status.setErrorDetails(getText(node));
                 }
             }

@@ -117,12 +117,11 @@ public class PDFBatchPrintStream extends PDFCommonPrintStream {
     /**
      * 接続に使用するURLを作成します。
      */
-    public void createConnectUrl(){
+    public void createConnectUrl() {
 
         if (inputUrl.startsWith("http://")) {
             this.serverUrl = inputUrl;
-        }
-        else {
+        } else {
             this.serverUrl = "http://" + inputUrl;
         }
 
@@ -137,7 +136,7 @@ public class PDFBatchPrintStream extends PDFCommonPrintStream {
             //":"の後ろがポート番号として正しくない場合のチェックはしない。ユーザ指定通りにする
         }
 
-        if (this.serverUrl.indexOf("/doprint") < 0){
+        if (this.serverUrl.indexOf("/doprint") < 0) {
             this.serverUrl = this.serverUrl + "/doprint";
         }
 
@@ -190,7 +189,7 @@ public class PDFBatchPrintStream extends PDFCommonPrintStream {
 
             OutputStream output = getOutput(connection.getOutputStream());
 
-            String head ="sppdata=";
+            String head = "sppdata=";
             byte[] params = head.getBytes();
 
             output.write(params);
@@ -222,28 +221,22 @@ public class PDFBatchPrintStream extends PDFCommonPrintStream {
 
                         if (name.equalsIgnoreCase("RESULT")) {
                             result = value;
-                        }
-                        else if (name.equalsIgnoreCase("ERROR_CODE")) {
+                        } else if (name.equalsIgnoreCase("ERROR_CODE")) {
                             errorCode = value;
-                        }
-                        else if (name.equalsIgnoreCase("ERROR_CAUSE")) {
+                        } else if (name.equalsIgnoreCase("ERROR_CAUSE")) {
                             errorCause = value;
-                        }
-                        else if (name.equalsIgnoreCase("ERROR_DETAILS")) {
+                        } else if (name.equalsIgnoreCase("ERROR_DETAILS")) {
                             errorDetails = value;
-                        }
-                        else if (name.equalsIgnoreCase("jobID")) {
+                        } else if (name.equalsIgnoreCase("jobID")) {
                             jobId = value;
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 LOGGER.severe("HTTP response(" + Integer.toString(response) + ") from Batch Print Server is not OK.");
                 throw new IOException("HTTP response(" + Integer.toString(response) + ") from Batch Print Server is not OK.");
             }
-        }
-        catch (IOException t) {
+        } catch (IOException t) {
             LOGGER.severe(t.getMessage());
             throw t;
         }

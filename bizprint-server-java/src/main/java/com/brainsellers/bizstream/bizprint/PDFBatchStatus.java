@@ -118,11 +118,9 @@ public class PDFBatchStatus {
     protected String encode(String text) throws IOException {
         try {
             return URLEncoder.encode(text, "UTF-8");
-        }
-        catch (NoSuchMethodError e) {
+        } catch (NoSuchMethodError e) {
             return PDFUrlTools.encode(text);
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             return PDFUrlTools.encode(text);
         }
     }
@@ -138,11 +136,9 @@ public class PDFBatchStatus {
     protected String decode(String text) throws UnsupportedEncodingException {
         try {
             return URLDecoder.decode(text, "UTF-8");
-        }
-        catch (NoSuchMethodError e) {
+        } catch (NoSuchMethodError e) {
             return PDFUrlTools.decode(text);
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             return PDFUrlTools.decode(text);
         }
     }
@@ -170,8 +166,7 @@ public class PDFBatchStatus {
 
         if (jobId != null) {
             output.write(("jobID=" + encode(jobId)).getBytes());
-        }
-        else {
+        } else {
             output.write("jobID=".getBytes());
         }
 
@@ -207,8 +202,7 @@ public class PDFBatchStatus {
                 statusIndex.put(status.getJobId(), status);
                 statusArray.add(status);
             }
-        }
-        else {
+        } else {
             LOGGER.severe("HTTP response(" + Integer.toString(response) + ") from Batch Print Server is not OK.");
             throw new BizPrintException("HTTP response(" + Integer.toString(response) + ") from Batch Print Server is not OK.");
         }
@@ -303,12 +297,11 @@ public class PDFBatchStatus {
     /**
      *  接続に使用するURLを作成します。
      */
-    public void createConnectUrl(){
+    public void createConnectUrl() {
 
         if (inputUrl.startsWith("http://")) {
             this.serverUrl = inputUrl;
-        }
-        else {
+        } else {
             this.serverUrl = "http://" + inputUrl;
         }
 
@@ -324,7 +317,7 @@ public class PDFBatchStatus {
             // ":"の後ろがポート番号として正しくない場合のチェックはしない。ユーザ指定通りにする
         }
 
-        if (this.serverUrl.indexOf("/getstatus") < 0){
+        if (this.serverUrl.indexOf("/getstatus") < 0) {
             this.serverUrl = this.serverUrl + "/getstatus";
         }
     }

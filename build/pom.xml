@@ -33,6 +33,10 @@
         <!-- 他のサブプロジェクトを順番に追加 -->
     </modules>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <!-- 暗号化キーを固定したい場合はここでセットする -->
     <!--
     <properties>
@@ -122,13 +126,21 @@ public class RandomStringGenerator {
                     <configLocation>../config/checkstyle/checkstyle.xml</configLocation>
                     <suppressionsLocation>../config/checkstyle/suppressions.xml</suppressionsLocation>
                     <propertyExpansion>config_loc=${project.basedir}/../config/checkstyle</propertyExpansion>
-                    <sourceEncoding>UTF-8</sourceEncoding>
-                    <consoleOutput>false</consoleOutput>
-                    <failOnViolation>false</failOnViolation>
-                    <failsOnError>false</failsOnError>
+                    <consoleOutput>true</consoleOutput>
+                    <failOnViolation>true</failOnViolation>
+                    <failsOnError>true</failsOnError>
                     <linkXRef>false</linkXRef>
                     <skip>${checkstyle.skip}</skip>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>checkstyle-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- EditorConfig: file format validation -->
@@ -137,9 +149,19 @@ public class RandomStringGenerator {
                 <artifactId>editorconfig-maven-plugin</artifactId>
                 <version>0.1.3</version>
                 <configuration>
-                    <failOnFormatViolation>false</failOnFormatViolation>
+                    <failOnFormatViolation>true</failOnFormatViolation>
                     <failOnNoMatchingProperties>false</failOnNoMatchingProperties>
+                    <skip>${editorconfig.skip}</skip>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>editorconfig-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

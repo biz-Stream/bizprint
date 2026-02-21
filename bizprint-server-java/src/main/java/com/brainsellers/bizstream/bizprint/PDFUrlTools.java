@@ -67,13 +67,11 @@ public abstract class PDFUrlTools {
 
             if ((ci <= 0x7f) && UNCHANGES[ci & 0x7f]) {
                 buf.append((char) ci);
-            }
-            else {
+            } else {
                 if (ci == ' ') {
                     buf.append('+');
                     changed = true;
-                }
-                else {
+                } else {
                     bbb.reset();
                     writer = new OutputStreamWriter(bbb, "UTF-8");
 

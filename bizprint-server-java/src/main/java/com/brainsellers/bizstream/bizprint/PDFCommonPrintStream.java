@@ -152,11 +152,9 @@ public abstract class PDFCommonPrintStream extends OutputStream  {
     protected String encode(String text) throws IOException {
         try {
             return URLEncoder.encode(text, "UTF-8");
-        }
-        catch (NoSuchMethodError e) {
+        } catch (NoSuchMethodError e) {
             return PDFUrlTools.encode(text);
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             return PDFUrlTools.encode(text);
         }
     }
