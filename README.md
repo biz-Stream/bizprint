@@ -48,7 +48,7 @@ mvn clean install
 * bizprint-client
   * ダイレクト印刷は DirectPrint-OSS-Setup-X.X.X.exe を実行してインストールします (要管理者権限)
   * バッチ印刷は BatchPrint-OSS-Setup-X.X.X.exe を実行してインストールします (要管理者権限)
-* bizprint-server-charp
+* bizprint-server-csharp
   * bizprint-server-csharp.dll および Ionic.Zip.dll を参照に追加します (Visual Studioの場合)
 * bizprint-server-java
   * bizprint-server-java-X.X.X.jar および zip4j-X.X.X.jar をクラスパスに追加します
@@ -57,7 +57,7 @@ mvn clean install
 * bizprint-client
   * ダイレクト印刷は Windows 11 以上で動作確認をしています
   * バッチ印刷は Windows Server 2022 以上で動作確認をしています
-* bizprint-server-charp
+* bizprint-server-csharp
   * .NET Framework 2.0 以上で動作しますが、 4.6 で動作確認をしています
 * bizprint-server-java
   * JDK 8 以上で動作しますが、 JDK 21 で動作確認をしています
@@ -127,6 +127,19 @@ String result = batch.getResult();
 
 [sample ディレクトリ](sample/) に詳細なサンプルプログラムがあります。
 
+## ドキュメント
+
+詳細なドキュメントは [docs](docs/) ディレクトリにあります。
+
+| ドキュメント | 概要 |
+|---|---|
+| [アーキテクチャ](docs/architecture.md) | システム全体像・SPP ファイル仕様・通信プロトコル |
+| [設定リファレンス](docs/configuration.md) | 全設定パラメータの一覧と説明 |
+| [エラーコード一覧](docs/error-codes.md) | エラーコード・ステータスコードの詳細 |
+| [トラブルシューティング](docs/troubleshooting.md) | よくある問題と解決策 |
+| [API リファレンス](docs/api-reference.md) | サーバ側 Java/C# API の詳細 |
+| [CHANGELOG](CHANGELOG.md) | バージョン変更履歴 |
+
 ## 開発への参加
 * 不具合の修正や機能のブラッシュアップを目的として継続的に開発を行っております
 * 2025年6月時点ではブレインセラーズ以外の第三者がリポジトリに変更を加えることはできず、ソースを閲覧することのみ可能です
@@ -137,4 +150,4 @@ String result = batch.getResult();
 ※パッケージ版はライセンスが異なるのでご注意ください
 
 ## 注意事項
-* 全ての記載事項は2025年6月時点の情報であり、今後変更される可能性があります
+* 全ての記載事項は2026年2月時点の情報であり、今後変更される可能性があります
