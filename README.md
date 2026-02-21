@@ -23,8 +23,8 @@
 * bizprint-server-java
   * ダイレクト印刷・バッチ印刷へ送信する印刷データ(sppファイル)を作成するライブラリ (Java版)
   * 任意のアプリケーションに組み込むことで、そのアプリケーションからダイレクト印刷・バッチ印刷を行えるようになります
-* build
-  * ソース一式をビルドするためのMavenプロジェクト
+* pom.xml（ルート）
+  * ソース一式をビルドするためのMaven親プロジェクト
 
 ## ビルドに必要なもの
 * Windows 10 / Windows Server 2019 以上
@@ -36,7 +36,6 @@
 
 ## ビルド方法
 ```
-cd build
 mvn clean install
 ```
 各モジュールのtargetディレクトリにビルド結果が出力されます
@@ -64,8 +63,69 @@ mvn clean install
   * JDK 8 以上で動作しますが、 JDK 21 で動作確認をしています
 
 ## 実行方法
-* TBD
-* サンプルを参照
+
+bizprint は既存の PDF ファイルを印刷するためのライブラリです。
+ダイレクト印刷（Web ブラウザ経由）とバッチ印刷（サーバ間通信）の 2 種類があります。
+
+### ダイレクト印刷（サーブレット）
+
+サーブレットコンテナ（Tomcat 等）上で動作する Web アプリケーションから利用します。
+
+```java
+// ダイレクト印刷ストリームの生成
+PDFDirectPrintStream direct = new PDFDirectPrintStream(response);
+direct.setPrinterName("プリンタ名");
+direct.setNumberOfCopy(1);
+direct.setSelectedTray("AUTO");
+direct.setJobName("ジョブ名");
+direct.setDoFit(true);
+
+// PDFファイルを読み込んでストリームに書き出す
+FileInputStream fis = new FileInputStream("印刷するPDF.pdf");
+byte[] buffer = new byte[4096];
+int bytesRead;
+while ((bytesRead = fis.read(buffer)) != -1) {
+    direct.write(buffer, 0, bytesRead);
+}
+fis.close();
+
+// 暗号化sppファイルを生成し、HTTPレスポンスとして送信
+direct.close();
+```
+
+### バッチ印刷（スタンドアロン）
+
+サーブレットコンテナ不要で、スタンドアロンアプリケーションから利用できます。
+
+```java
+// バッチ印刷ストリームの生成
+PDFBatchPrintStream batch = new PDFBatchPrintStream("http://server:3000/");
+batch.setPrinterName("プリンタ名");
+batch.setNumberOfCopy(1);
+batch.setSelectedTray("AUTO");
+batch.setJobName("ジョブ名");
+batch.setDoFit(true);
+
+// PDFファイルを読み込んでストリームに書き出す
+FileInputStream fis = new FileInputStream("印刷するPDF.pdf");
+byte[] buffer = new byte[4096];
+int bytesRead;
+while ((bytesRead = fis.read(buffer)) != -1) {
+    batch.write(buffer, 0, bytesRead);
+}
+fis.close();
+
+// 暗号化sppファイルを生成し、バッチ印刷サーバへ送信
+batch.close();
+
+// 印刷結果の確認
+String jobId = batch.getJobId();
+String result = batch.getResult();
+```
+
+### サンプルプログラム
+
+[sample ディレクトリ](sample/) に詳細なサンプルプログラムがあります。
 
 ## 開発への参加
 * 不具合の修正や機能のブラッシュアップを目的として継続的に開発を行っております

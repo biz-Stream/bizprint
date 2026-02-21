@@ -27,14 +27,17 @@
     <name>bizprint Parent Project</name>
 
     <modules>
-        <module>../bizprint-server-java</module>
-        <module>../bizprint-server-csharp</module>
-        <module>../bizprint-client</module>
+        <module>bizprint-server-java</module>
+        <module>bizprint-server-csharp</module>
+        <module>bizprint-client</module>
         <!-- 他のサブプロジェクトを順番に追加 -->
     </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- 親プロジェクトにはJavaソースがないためスキップ。子モジュールで個別に設定する -->
+        <checkstyle.skip>true</checkstyle.skip>
+        <editorconfig.skip>true</editorconfig.skip>
     </properties>
 
     <!-- 暗号化キーを固定したい場合はここでセットする -->
