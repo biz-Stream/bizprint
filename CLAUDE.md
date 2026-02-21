@@ -33,7 +33,7 @@ bizprint は biz-Stream の印刷系モジュールを独立させたもの。
 | `bizprint-server-java` | Java | spp ファイル生成ライブラリ（サーバー側） |
 | `bizprint-server-csharp` | C# | spp ファイル生成ライブラリ（サーバー側） |
 | `bizprint-client` | C# | ダイレクト印刷・バッチ印刷 Windows クライアント |
-| `build` | Maven | 一括ビルド用親プロジェクト |
+| `pom.xml`（ルート） | Maven | 一括ビルド用親プロジェクト |
 
 ### bizprint-client の内部構成
 | プロジェクト | 責務 |
@@ -59,7 +59,6 @@ bizprint は biz-Stream の印刷系モジュールを独立させたもの。
 
 ### ビルド方法
 ```bash
-cd build
 mvn clean install
 ```
 
@@ -105,5 +104,5 @@ mvn clean install
 - CI が通っていない PR はマージしない。
 
 ## CI
-- GitHub Actions（self-hosted Windows ランナー）で `mvn -f build/pom.xml clean install` を実行。
+- GitHub Actions（self-hosted Windows ランナー）で `mvn clean install` を実行。
 - PR 作成時と main への push 時に自動実行。

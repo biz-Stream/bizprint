@@ -21,7 +21,7 @@
         <groupId>com.brainsellers.bizstream.bizprint</groupId>
         <artifactId>bizprint-parent</artifactId>
         <version>1.0.0</version>
-        <relativePath>../build/pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>com.brainsellers.bizstream.bizprint</groupId>

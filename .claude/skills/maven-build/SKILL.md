@@ -12,13 +12,13 @@ Maven 一括ビルドを実行する。
 ### クリーンビルド（フルビルド）
 
 ```bash
-mvn -f build/pom.xml clean install
+mvn clean install
 ```
 
 ### パッケージビルド
 
 ```bash
-mvn -f build/pom.xml clean package
+mvn clean package
 ```
 
 ## 注意事項
