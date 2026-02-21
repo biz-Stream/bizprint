@@ -122,15 +122,15 @@ public class PDFDirectPrintStream extends PDFCommonPrintStream {
         response.setContentType("application/x-spp");
 
         //実行ごとにファイル名を変える
-        if(sppnameUnified){
+        if (sppnameUnified) {
             //現在時刻からファイル名作成
             Date nowdate = new Date();
             int rand = (int) (Math.random() * 1000);
 
-            String fname_now = new SimpleDateFormat("yyyyMMdd_HHmmss").format(nowdate) + "_" + String.format("%04d", rand) + ".spp";
+            String fnameNow = new SimpleDateFormat("yyyyMMdd_HHmmss").format(nowdate) + "_" + String.format("%04d", rand) + ".spp";
 
             //attachmentだとブラウザによってはダウンロード後に手動ファイル保存になるためinlineにする
-            response.addHeader("Content-Disposition", "inline; filename=" + fname_now );
+            response.addHeader("Content-Disposition", "inline; filename=" + fnameNow);
         }
 
         OutputStream output = getOutput(response.getOutputStream());

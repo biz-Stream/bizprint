@@ -90,7 +90,7 @@ public class CreateEncryptSpp {
     public CreateEncryptSpp() {
     }
 
-    public void setPassword(String value){
+    public void setPassword(String value) {
         userPass = value;
     }
 
