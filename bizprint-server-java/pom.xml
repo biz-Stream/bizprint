@@ -128,11 +128,13 @@
                                 <replace
                                     file="${project.build.directory}/temp-src/com/brainsellers/bizstream/bizprint/CreateEncryptSpp.java"
                                     token="___RANDOM_STRINGS1___"
-                                    value="${randomString1}" />
+                                    value="${randomString1}"
+                                    encoding="UTF-8" />
                                 <replace
                                     file="${project.build.directory}/temp-src/com/brainsellers/bizstream/bizprint/CreateEncryptSpp.java"
                                     token="___RANDOM_STRINGS2___"
-                                    value="${randomString2}" />
+                                    value="${randomString2}"
+                                    encoding="UTF-8" />
 
                                 <!-- プロパティのデバッグ出力 -->
                                 <echo>
