@@ -104,13 +104,17 @@
 
                                 <!-- 置換処理：テンポラリディレクトリ内のファイルを置換 -->
                                 <replace file="${project.build.directory}/temp-src/BizPrintCommon/CommonConstants.cs"
-                                         token="___RANDOM_STRINGS1___" value="${randomString1}"/>
+                                         token="___RANDOM_STRINGS1___" value="${randomString1}"
+                                         encoding="ISO-8859-1"/>
                                 <replace file="${project.build.directory}/temp-src/BizPrintCommon/CommonConstants.cs"
-                                         token="___RANDOM_STRINGS2___" value="${randomString2}"/>
+                                         token="___RANDOM_STRINGS2___" value="${randomString2}"
+                                         encoding="ISO-8859-1"/>
                                 <replace file="${project.build.directory}/temp-src/SppFileExtractTool/SppExtracorForTool.cs"
-                                         token="___RANDOM_STRINGS1___" value="${randomString1}"/>
+                                         token="___RANDOM_STRINGS1___" value="${randomString1}"
+                                         encoding="ISO-8859-1"/>
                                 <replace file="${project.build.directory}/temp-src/SppFileExtractTool/SppExtracorForTool.cs"
-                                         token="___RANDOM_STRINGS2___" value="${randomString2}"/>
+                                         token="___RANDOM_STRINGS2___" value="${randomString2}"
+                                         encoding="ISO-8859-1"/>
 
                                 <!-- プロパティのデバッグ出力 -->
                                 <echo>
