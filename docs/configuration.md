@@ -293,3 +293,89 @@ SilentPdfPrinter の設定ファイルです。SPP ファイルのダウンロ�
 ```
 2024-01-15 10:30:45,123 INFO - DirectPrintService Start.
 ```
+
+---
+
+## タイマー・インターバル設定クイックリファレンス
+
+全タイマー・インターバル設定を処理フェーズ順にまとめた横断的テーブルです。処理フローとの対応関係は[アーキテクチャ - 処理フェーズとタイマー設定](architecture.md#処理フェーズとタイマー設定ダイレクト印刷)を参照してください。
+
+### フェーズ 1: 接続（SilentPdfPrinter → DirectPrintService）
+
+ダイレクト印刷のみ。バッチ印刷ではサーバーから直接接続するため、クライアント側の設定はありません。
+
+| 設定名 | 設定ファイル | デフォルト値 | 単位 | 説明 | 関連エラー |
+|---|---|---|---|---|---|
+| `timeout` | SilentPdfPrinter.xml | 20000 | ms | 接続タイムアウト | - |
+| `retry` | SilentPdfPrinter.xml | 5 | 回 | 接続リトライ回数 | - |
+| `retryinterval` | SilentPdfPrinter.xml | 5000 | ms | リトライ間隔 | - |
+| `waitloopmsec` | SilentPdfPrinter.xml | 1000 | ms | 多重起動時のチェック待機時間 | - |
+
+### フェーズ 2: キュー監視・フォーム作成
+
+| 設定名 | 設定ファイル | デフォルト値 | 単位 | 説明 | 関連エラー |
+|---|---|---|---|---|---|
+| `printProcessThreadWaitMsec` | DirectPrintService.xml / BatchPrintService.xml | 100 | ms | 印刷スレッドのループ待機時間 | - |
+| `defaultPrinterTimeout` | DirectPrintService.xml / BatchPrintService.xml | 10000 | ms | デフォルトプリンタ取得タイムアウト | 0107 |
+| `defaultPrinterCheckInterval` | DirectPrintService.xml / BatchPrintService.xml | 33 | ms | デフォルトプリンタ取得のチェック間隔 | - |
+| `formCreateTimeoutMsec` | DirectPrintService.xml / BatchPrintService.xml | 10000 | ms | フォーム作成のタイムアウト | 0201 |
+| `formCreateTimeoutCheckMsec` | DirectPrintService.xml / BatchPrintService.xml | 100 | ms | フォーム作成のタイムアウトチェック間隔 | - |
+| `formCreateRetryNum` | DirectPrintService.xml / BatchPrintService.xml | 5 | 回 | フォーム作成の最大リトライ回数 | 0201 |
+| `formCreateRetryWaitMsec` | DirectPrintService.xml / BatchPrintService.xml | 500 | ms | フォーム作成のリトライ待機時間 | - |
+
+### フェーズ 3: PDF ロード・印刷実行・スプーラー監視
+
+| 設定名 | 設定ファイル | デフォルト値 | 単位 | 説明 | 関連エラー |
+|---|---|---|---|---|---|
+| `loadRetryNum` | DirectPrintService.xml / BatchPrintService.xml | 5 | 回 | PDF ロードのリトライ回数 | 0202 |
+| `loadRetryWaitMsec` | DirectPrintService.xml / BatchPrintService.xml | 1000 | ms | PDF ロードのリトライ待機時間 | - |
+| `printFormTimerInterval` | DirectPrintService.xml / BatchPrintService.xml | 100 | ms | スプール状態チェックのタイマー間隔 | - |
+| `spoolTimeOut` | DirectPrintService.xml / BatchPrintService.xml | 60000 | ms | スプーラー監視タイムアウト（設定値） | 0405, 0410 |
+
+> **`spoolTimeOut` の実効値に関する注記**
+>
+> `spoolTimeOut` の設定値には `loadRetryNum * loadRetryWaitMsec` が自動的に加算されます。
+> さらに、タイムアウト判定ではこの実効値の **2 倍**の時間が使用されます。
+>
+> ```
+> 実効値 = spoolTimeOut + (loadRetryNum * loadRetryWaitMsec)
+> タイムアウト判定 = 実効値 * 2
+> ```
+>
+> デフォルト値での計算:
+> - 実効値: 60000 + (5 * 1000) = 65000ms
+> - タイムアウト判定: 65000 * 2 = **130000ms (130秒)**
+
+### フェーズ 4: 印刷ダイアログ監視（ダイレクト印刷 + printDialog=true のみ）
+
+| 設定名 | 設定ファイル | デフォルト値 | 単位 | 説明 | 関連エラー |
+|---|---|---|---|---|---|
+| `printDlgName` | DirectPrintService.xml | `印刷\|進行状況` | - | 監視対象ダイアログのウィンドウ名 | 0401, 0402 |
+| `printDlgFindTimeOut` | DirectPrintService.xml | 10000 | ms | ダイアログ検知タイムアウト | 0401, 0402 |
+| `printDlgStayingTimeCheck` | DirectPrintService.xml | 60000 | ms | ダイアログ長時間表示の警告ログまでの時間 | - |
+| `printDlgLeaveTimeOut` | DirectPrintService.xml | 3 | 秒 | ダイアログ消失後のフォーム終了待機 | - |
+
+### フェーズ 5: サービス自動停止 / 自動再起動
+
+**ダイレクト印刷（自動停止）:**
+
+| 設定名 | 設定ファイル | デフォルト値 | 単位 | 説明 | 関連エラー |
+|---|---|---|---|---|---|
+| `exitTimerEnabled` | DirectPrintService.xml | true | - | 自動停止を有効にするか | - |
+| `exitTimerLimit` | DirectPrintService.xml | 30 | 秒 | 自動停止までのアイドル時間 | - |
+
+**バッチ印刷（自動再起動）:**
+
+| 設定名 | 設定ファイル | デフォルト値 | 単位 | 説明 | 関連エラー |
+|---|---|---|---|---|---|
+| `restartflg` | BatchPrintService.xml | true | - | 自動再起動を有効にするか | - |
+| `restartprintnum` | BatchPrintService.xml | 128 | 回 | 再起動までの印刷回数 | - |
+| `restartmin` | BatchPrintService.xml | 20 | 分 | キュー空後の再起動待機時間 | - |
+
+### ヘルスチェッカー
+
+| 設定名 | 設定ファイル | デフォルト値 | 単位 | 説明 | 関連エラー |
+|---|---|---|---|---|---|
+| `connectTimeout` | BizPrintHealthChecker.xml | 2000 | ms | サービス接続タイムアウト | - |
+| `connectRetryNum` | BizPrintHealthChecker.xml | 5 | 回 | 接続リトライ回数 | - |
+| `connectRetryWaitMsec` | BizPrintHealthChecker.xml | 200 | ms | リトライ待機時間 | - |
