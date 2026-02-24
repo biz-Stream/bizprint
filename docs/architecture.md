@@ -104,6 +104,217 @@ sequenceDiagram
 
 バッチ印刷では、サーバーが直接 BatchPrintService の `/doprint` エンドポイントに SPP ファイルを POST します。レスポンスとして印刷結果（成功/失敗）と jobID が返却されます。印刷状況は `/getstatus` エンドポイントで問い合わせることができます。
 
+## 処理フェーズとタイマー設定（ダイレクト印刷）
+
+ダイレクト印刷の処理は 5 つのフェーズに分かれます。各フェーズのシーケンス図に、関連するタイマー・インターバル設定を示します。設定の詳細は[設定リファレンス](configuration.md)を参照してください。
+
+### フェーズ 1: 接続（SilentPdfPrinter → DirectPrintService）
+
+SilentPdfPrinter が DirectPrintService に SPP ファイルを転送するフェーズです。DirectPrintService が未起動の場合は起動してから接続します。
+
+```mermaid
+sequenceDiagram
+    participant SPP as SilentPdfPrinter
+    participant DPS as DirectPrintService
+
+    SPP ->> SPP: DPS プロセスチェック
+    alt DPS が未起動
+        SPP ->> DPS: プロセス起動
+        Note over SPP: waitloopmsec (default: 1000ms)<br/>多重起動時のチェック待機
+    end
+    loop 接続リトライ (最大 retry 回, default: 5)
+        SPP ->> DPS: HTTP 接続試行
+        alt 接続失敗
+            Note over SPP: retryinterval (default: 5000ms)<br/>リトライ間隔
+        end
+    end
+    Note over SPP,DPS: timeout (default: 20000ms) 接続タイムアウト
+    SPP ->> DPS: POST /doprint (sppdata=...)
+    DPS -->> SPP: HTTP 200 OK
+```
+
+| 設定項目 | 設定ファイル | デフォルト値 | 説明 |
+|---|---|---|---|
+| `timeout` | SilentPdfPrinter.xml | 20000ms | 接続タイムアウト |
+| `retry` | SilentPdfPrinter.xml | 5 回 | 接続リトライ回数 |
+| `retryinterval` | SilentPdfPrinter.xml | 5000ms | リトライ間隔 |
+| `waitloopmsec` | SilentPdfPrinter.xml | 1000ms | 多重起動時のチェック待機時間 |
+
+### フェーズ 2: キュー監視・フォーム作成
+
+DirectPrintService が印刷キューからジョブを取り出し、印刷用の PrintForm（非表示 Windows フォーム）を作成するフェーズです。
+
+```mermaid
+sequenceDiagram
+    participant DPS as DirectPrintService<br/>(キュースレッド)
+    participant PT as 印刷スレッド
+    participant PF as PrintForm
+
+    DPS ->> DPS: キューからジョブ取得
+    Note over DPS,PT: printProcessThreadWaitMsec (default: 100ms)<br/>印刷スレッドのループ待機
+    DPS ->> PT: 印刷スレッド起動
+    PT ->> PT: デフォルトプリンタ取得
+    Note over PT: defaultPrinterTimeout (default: 10000ms)<br/>defaultPrinterCheckInterval (default: 33ms)
+    loop フォーム作成リトライ (最大 formCreateRetryNum 回, default: 5)
+        PT ->> PF: PrintForm 作成
+        alt 作成失敗
+            Note over PT: formCreateRetryWaitMsec (default: 500ms)<br/>リトライ待機
+        end
+    end
+    Note over PT,PF: formCreateTimeoutMsec (default: 10000ms)<br/>フォーム作成タイムアウト
+```
+
+| 設定項目 | 設定ファイル | デフォルト値 | 説明 |
+|---|---|---|---|
+| `printProcessThreadWaitMsec` | DirectPrintService.xml | 100ms | 印刷スレッドのループ待機時間 |
+| `defaultPrinterTimeout` | DirectPrintService.xml | 10000ms | デフォルトプリンタ取得タイムアウト |
+| `defaultPrinterCheckInterval` | DirectPrintService.xml | 33ms | デフォルトプリンタ取得のチェック間隔 |
+| `formCreateTimeoutMsec` | DirectPrintService.xml | 10000ms | フォーム作成のタイムアウト |
+| `formCreateRetryNum` | DirectPrintService.xml | 5 回 | フォーム作成の最大リトライ回数 |
+| `formCreateRetryWaitMsec` | DirectPrintService.xml | 500ms | フォーム作成のリトライ待機時間 |
+
+### フェーズ 3: PDF ロード・印刷実行・スプーラー監視
+
+PrintForm が Acrobat Reader (ActiveX) で PDF をロードし、印刷を実行して、Windows スプーラーへのジョブ送信完了を監視するフェーズです。
+
+```mermaid
+sequenceDiagram
+    participant PF as PrintForm
+    participant Acrobat as Acrobat Reader<br/>(ActiveX)
+    participant Mon as PrintRequestMonitor
+    participant Spool as Windows<br/>スプーラー
+
+    loop PDF ロードリトライ (最大 loadRetryNum 回, default: 5)
+        PF ->> Acrobat: LoadFile (PDF ロード)
+        alt ロード失敗
+            Note over PF: loadRetryWaitMsec (default: 1000ms)<br/>リトライ待機
+        end
+    end
+    PF ->> Mon: スプーラー監視開始
+    PF ->> Acrobat: printAll / printPages (印刷命令)
+    Note over PF: printFormTimerInterval (default: 100ms)<br/>タイマーでスプール状態を定期チェック
+    Acrobat ->> Spool: 印刷ジョブ送信
+    Mon -->> PF: ジョブ検知 (IsJobSetted=true)
+    Note over PF,Spool: spoolTimeOut の実効値でタイムアウト判定<br/>(詳細は下記注記参照)
+```
+
+| 設定項目 | 設定ファイル | デフォルト値 | 説明 |
+|---|---|---|---|
+| `loadRetryNum` | DirectPrintService.xml | 5 回 | PDF ロードのリトライ回数 |
+| `loadRetryWaitMsec` | DirectPrintService.xml | 1000ms | PDF ロードのリトライ待機時間 |
+| `printFormTimerInterval` | DirectPrintService.xml | 100ms | スプール状態チェックのタイマー間隔 |
+| `spoolTimeOut` | DirectPrintService.xml | 60000ms | スプーラー監視タイムアウト（設定値） |
+
+> **`spoolTimeOut` の実効値について**
+>
+> `spoolTimeOut` の設定値には、PDF ロードのリトライに要する時間（`loadRetryNum * loadRetryWaitMsec`）が自動的に加算されます。さらに、タイムアウト判定ではこの実効値の **2 倍**の時間が使用されます。
+>
+> デフォルト値での計算例:
+> 1. 設定値: 60000ms
+> 2. ロードリトライ時間の加算: 60000 + (5 * 1000) = 65000ms（実効値）
+> 3. タイムアウト判定: 65000 * 2 = **130000ms（130 秒）**
+>
+> 白紙印刷や印刷タイムアウト（エラーコード 0405, 0410）が発生する場合は、この実効値を考慮して `spoolTimeOut` を調整してください。詳細は[トラブルシューティング](troubleshooting.md#タイマーインターバル設定の調整ガイド)を参照してください。
+
+### フェーズ 4: 印刷ダイアログ監視（printDialog=true の場合のみ）
+
+`printDialog=true` が指定された場合にのみ実行されるフェーズです。Acrobat Reader が表示する印刷ダイアログをウィンドウ名で検知し、ユーザーの操作完了を待機します。
+
+```mermaid
+sequenceDiagram
+    participant PF as PrintForm
+    participant Dlg as 印刷ダイアログ
+    participant User as ユーザー
+
+    PF ->> PF: ダイアログ検知ループ開始
+    Note over PF,Dlg: printDlgFindTimeOut (default: 10000ms)<br/>ダイアログ検知タイムアウト
+    Dlg -->> PF: ダイアログ検知 (printDlgName で名前照合)
+    Note over PF,User: printDlgStayingTimeCheck (default: 60000ms)<br/>長時間表示の警告ログ出力
+    User ->> Dlg: 印刷実行 / キャンセル
+    Dlg -->> PF: ダイアログ消失を検知
+    Note over PF: printDlgLeaveTimeOut (default: 3秒)<br/>ダイアログ消失後のフォーム終了待機
+```
+
+| 設定項目 | 設定ファイル | デフォルト値 | 説明 |
+|---|---|---|---|
+| `printDlgFindTimeOut` | DirectPrintService.xml | 10000ms | ダイアログ検知タイムアウト |
+| `printDlgStayingTimeCheck` | DirectPrintService.xml | 60000ms | ダイアログ長時間表示の警告ログまでの時間 |
+| `printDlgLeaveTimeOut` | DirectPrintService.xml | 3 秒 | ダイアログ消失後のフォーム終了待機 |
+| `printDlgName` | DirectPrintService.xml | `印刷\|進行状況` | 監視対象ダイアログのウィンドウ名 |
+
+### フェーズ 5: サービス自動停止
+
+DirectPrintService はオンデマンド起動型のため、印刷キューが空になり一定時間アイドル状態が続くと自動的にプロセスを停止します。
+
+```mermaid
+sequenceDiagram
+    participant DPS as DirectPrintService
+
+    DPS ->> DPS: 印刷キュー空を検知
+    Note over DPS: exitTimerLimit (default: 30秒)<br/>アイドル時間カウント開始
+    alt exitTimerEnabled=true かつ exitTimerLimit 経過
+        DPS ->> DPS: プロセス自動停止
+    else 新しい印刷要求を受信
+        DPS ->> DPS: タイマーリセット
+    end
+```
+
+| 設定項目 | 設定ファイル | デフォルト値 | 説明 |
+|---|---|---|---|
+| `exitTimerEnabled` | DirectPrintService.xml | true | 自動停止を有効にするか |
+| `exitTimerLimit` | DirectPrintService.xml | 30 秒 | 自動停止までのアイドル時間 |
+
+---
+
+## 処理フェーズとタイマー設定（バッチ印刷）
+
+バッチ印刷はダイレクト印刷と以下の点が異なります:
+
+- **フェーズ 1 が異なる**: SilentPdfPrinter を介さず、サーバーから直接 BatchPrintService に POST する
+- **フェーズ 4 がない**: バッチ印刷では `printDialog` パラメータが使用されないため、印刷ダイアログ監視は行われない
+- **フェーズ 5 が異なる**: 自動停止ではなく、自動再起動（メモリリーク対策）
+
+フェーズ 2（キュー監視・フォーム作成）とフェーズ 3（PDF ロード・印刷実行・スプーラー監視）はダイレクト印刷と同一です。設定ファイル名が `BatchPrintService.xml` になる点のみ異なります。
+
+### フェーズ 1: 接続（サーバー → BatchPrintService）
+
+サーバーから直接 BatchPrintService に SPP ファイルを POST するフェーズです。SilentPdfPrinter を介さないため、クライアント側のタイマー設定はありません。
+
+```mermaid
+sequenceDiagram
+    participant WebApp as Web アプリケーション
+    participant BPS as BatchPrintService
+
+    WebApp ->> WebApp: SPP ファイル生成
+    WebApp ->> BPS: POST /doprint (sppdata=...)
+    BPS ->> BPS: SPP 解凍・パラメータ解析
+    BPS ->> BPS: 印刷キューに登録
+    BPS -->> WebApp: RESULT=SUCCESS&jobID=...
+    Note over WebApp,BPS: 接続タイムアウトはサーバー側の<br/>HTTP クライアント設定に依存
+```
+
+### フェーズ 5: サービス自動再起動
+
+BatchPrintService は常駐型アプリケーションのため、自動停止ではなく自動再起動機能を持ちます。長時間稼働時のメモリリーク対策として、一定回数の印刷後にプロセスを再起動します。
+
+```mermaid
+sequenceDiagram
+    participant BPS as BatchPrintService
+
+    BPS ->> BPS: 印刷回数カウント
+    alt restartflg=true かつ restartprintnum に到達
+        BPS ->> BPS: キューが空になるまで待機
+        Note over BPS: restartmin (default: 20分)<br/>キュー空後の再起動待機時間
+        BPS ->> BPS: プロセス再起動
+    end
+```
+
+| 設定項目 | 設定ファイル | デフォルト値 | 説明 |
+|---|---|---|---|
+| `restartflg` | BatchPrintService.xml | true | 自動再起動を有効にするか |
+| `restartprintnum` | BatchPrintService.xml | 128 回 | 再起動までの印刷回数 |
+| `restartmin` | BatchPrintService.xml | 20 分 | キュー空後の再起動待機時間 |
+
 ## SPP ファイル仕様
 
 SPP（Silent PDF Print）ファイルは、印刷パラメータと PDF データを暗号化 ZIP でパッケージングしたファイルです。

@@ -268,6 +268,75 @@ bizprint の利用時に発生する一般的な問題と解決策をまとめ�
 
 ---
 
+## タイマー・インターバル設定の調整ガイド
+
+タイマー・インターバル設定に起因する問題が発生した場合に、どのパラメータを調整すべきかをまとめています。処理フローと各タイマー設定の関係は[アーキテクチャ - 処理フェーズとタイマー設定](architecture.md#処理フェーズとタイマー設定ダイレクト印刷)を参照してください。
+
+### 症状→調整パラメータ対応表
+
+| 症状 | エラーコード | 調整パラメータ | 設定ファイル | 処理フェーズ |
+|---|---|---|---|---|
+| 白紙が印刷される | - | `spoolTimeOut` | DirectPrintService.xml / BatchPrintService.xml | フェーズ 3 |
+| Microsoft Print to PDF でタイムアウト | 0401 / 0402 | `printDlgFindTimeOut`, `printDlgStayingTimeCheck` | DirectPrintService.xml | フェーズ 4 |
+| 印刷タイムアウト | 0410 | `spoolTimeOut` | DirectPrintService.xml / BatchPrintService.xml | フェーズ 3 |
+| 複数部数でタイムアウト | 0405 | `spoolTimeOut` | DirectPrintService.xml / BatchPrintService.xml | フェーズ 3 |
+| 印刷ダイアログ検知失敗 | 0401 / 0402 | `printDlgFindTimeOut`, `printDlgName` | DirectPrintService.xml | フェーズ 4 |
+| Acrobat Reader エラー（フォーム作成） | 0201 | `formCreateTimeoutMsec`, `formCreateRetryNum` | DirectPrintService.xml / BatchPrintService.xml | フェーズ 2 |
+| PDF ロードエラー | 0202 | `loadRetryNum`, `loadRetryWaitMsec` | DirectPrintService.xml / BatchPrintService.xml | フェーズ 3 |
+| ヘルスチェッカーが誤検知 | - | `connectTimeout`, `connectRetryNum` | BizPrintHealthChecker.xml | - |
+| DirectPrintService がすぐ停止する | - | `exitTimerLimit` | DirectPrintService.xml | フェーズ 5 |
+
+### シナリオ解説
+
+#### 白紙印刷のメカニズムと対策
+
+**現象**: 印刷は実行されるが、白紙が出力される。エラーは記録されない場合がある。
+
+**原因メカニズム**:
+
+1. PrintForm が Acrobat Reader (ActiveX) に印刷命令（`printAll` / `printPages`）を送信する
+2. Acrobat Reader が PDF データを Windows スプーラーに送信する（非同期処理）
+3. PrintForm は PrintRequestMonitor でスプーラーへのジョブ登録を監視する
+4. **スプーラーへの送信が完了する前にタイムアウトすると**、PrintForm がクローズされ Acrobat Reader の ActiveX コントロールが破棄される
+5. ActiveX 破棄により PDF データの送信が中断され、不完全なデータがスプーラーに残る
+6. スプーラーは不完全なデータをプリンタに送信し、白紙が出力される
+
+**対策**:
+
+`spoolTimeOut` を延長します。ただし、実効値の計算に注意が必要です。
+
+```
+実効値 = spoolTimeOut設定値 + (loadRetryNum * loadRetryWaitMsec)
+タイムアウト判定 = 実効値 * 2
+```
+
+デフォルト値の場合:
+- 実効値: 60000 + (5 * 1000) = 65000ms
+- タイムアウト判定: 65000 * 2 = 130000ms（130 秒）
+
+大きな PDF やネットワークプリンタなど、スプーラーへの送信に時間がかかる環境では `spoolTimeOut` を 120000（120 秒）以上に設定することを推奨します。
+
+#### Microsoft Print to PDF のダイアログタイムアウトのメカニズムと対策
+
+**現象**: Microsoft Print to PDF をプリンタに指定して `printDialog=true` で印刷した場合、保存ダイアログで操作中にタイムアウトエラー（0401 または 0402）が発生する。
+
+**原因メカニズム**:
+
+1. `printDialog=true` の場合、Acrobat Reader は印刷ダイアログを表示する
+2. Microsoft Print to PDF は印刷ダイアログの後に**ファイル保存ダイアログ**を表示する
+3. PrintForm はウィンドウ名（`printDlgName` で設定）に一致するダイアログの出現と消失を監視する
+4. 印刷ダイアログが閉じた時点で PrintForm は「ダイアログ操作完了」と判断する
+5. しかし保存ダイアログが表示されている間、スプーラーへのジョブ送信は行われない
+6. `printDlgFindTimeOut` 以内に保存ダイアログの操作を完了しないと、次の印刷ダイアログ検知でタイムアウトする
+
+**対策**:
+
+1. `printDlgFindTimeOut` を延長する（例: 60000ms 以上）。ユーザーが保存先を選択する時間を十分に確保します。
+2. `printDlgStayingTimeCheck` を延長する（例: 120000ms 以上）。ダイアログ操作中の警告ログの出力タイミングを遅らせます。
+3. Microsoft Print to PDF を使用する場合は `printDialog=false` に設定し、`saveFileName` パラメータで保存先を事前指定することを推奨します。
+
+---
+
 ## 関連ドキュメント
 
 - [エラーコード一覧](error-codes.md) - 全エラーコードの詳細
