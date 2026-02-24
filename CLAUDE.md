@@ -56,6 +56,7 @@ bizprint は biz-Stream の印刷系モジュールを独立させたもの。
 - Maven 3.0.3 以上
 - Visual Studio 2019 以上
 - Inno Setup 6 以上
+- Adobe Acrobat Reader（クライアント実行時に必要。ActiveX コントロールを利用）
 
 ### ビルド方法
 ```bash

@@ -8,7 +8,11 @@ bizprint は、サーバーサイドで生成された印刷データ（SPP フ�
 
 > **注意**: DirectPrintService・BatchPrintService は Windows サービスではありません。
 > DirectPrintService はオンデマンド起動型のプロセス、BatchPrintService は常駐型の Windows フォームアプリケーションです。
-> いずれも PDF 印刷に Acrobat SDK 経由で Acrobat Reader を使用しており、デスクトップセッション（ログイン状態）が必要です。
+> いずれも PDF 印刷に Acrobat SDK (ActiveX) 経由で Acrobat Reader を使用しており、デスクトップセッション（ログイン状態）が必要です。
+
+> **前提条件**: クライアント PC には **Adobe Acrobat Reader** があらかじめインストールされている必要があります。
+> bizprint-client は Acrobat Reader の ActiveX コントロール（`AxAcroPDFLib`）を利用して PDF の表示・印刷を行うため、
+> Acrobat Reader がインストールされていない環境では動作しません。
 
 ```mermaid
 flowchart LR
@@ -23,6 +27,8 @@ flowchart LR
         BatchSvc["BatchPrintService<br/>(常駐フォームアプリ)"]
         SppExt["SppExtracter<br/>SPP 解凍"]
         Queue["印刷キュー"]
+        PrintForm["PrintForm<br/>(非表示 WindowsForm)"]
+        AcrobatAx["Acrobat Reader<br/>(ActiveX 埋め込み)"]
     end
 
     Printer["プリンター"]
@@ -34,7 +40,9 @@ flowchart LR
     DirectSvc --> SppExt
     BatchSvc --> SppExt
     SppExt -->|"param.txt + PDF"| Queue
-    Queue -->|"Acrobat SDK"| Printer
+    Queue --> PrintForm
+    PrintForm -->|"Acrobat SDK<br/>(ActiveX)"| AcrobatAx
+    AcrobatAx -->|"Windows スプーラー"| Printer
 ```
 
 ### ダイレクト印刷
@@ -47,6 +55,7 @@ sequenceDiagram
     participant WebApp as Web アプリケーション
     participant SPP as SilentPdfPrinter
     participant DPS as DirectPrintService
+    participant Acrobat as Acrobat Reader<br/>(ActiveX)
     participant Printer as プリンター
 
     Browser ->> WebApp: 印刷要求
@@ -60,7 +69,9 @@ sequenceDiagram
     DPS -->> SPP: HTTP 200 OK
     DPS ->> DPS: SPP 解凍・パラメータ解析
     DPS ->> DPS: 印刷キューに登録
-    DPS ->> Printer: Acrobat SDK 経由で印刷
+    DPS ->> Acrobat: PrintForm から PDF をロード<br/>(LoadFile)
+    DPS ->> Acrobat: 印刷命令<br/>(printAll / printPages)
+    Acrobat ->> Printer: Windows スプーラー経由で印刷
     DPS ->> Browser: /doresponse で結果通知
     Note over DPS: アイドル時間経過後に自動停止
 ```
@@ -75,6 +86,7 @@ sequenceDiagram
 sequenceDiagram
     participant WebApp as Web アプリケーション
     participant BPS as BatchPrintService
+    participant Acrobat as Acrobat Reader<br/>(ActiveX)
     participant Printer as プリンター
 
     WebApp ->> WebApp: PDF 生成
@@ -83,7 +95,9 @@ sequenceDiagram
     BPS ->> BPS: SPP 解凍・パラメータ解析
     BPS ->> BPS: 印刷キューに登録
     BPS -->> WebApp: RESULT=SUCCESS&jobID=...
-    BPS ->> Printer: PDF サイレント印刷
+    BPS ->> Acrobat: PrintForm から PDF をロード<br/>(LoadFile)
+    BPS ->> Acrobat: 印刷命令<br/>(printAll / printPages)
+    Acrobat ->> Printer: Windows スプーラー経由で印刷
     WebApp ->> BPS: POST /getstatus<br/>(jobID=...)
     BPS -->> WebApp: ステータス XML
 ```
