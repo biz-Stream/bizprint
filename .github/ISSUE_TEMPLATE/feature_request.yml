@@ -42,7 +42,7 @@ body:
         - bizprint-server-java
         - bizprint-server-csharp
         - bizprint-client
-        - その他・不明
+        - その他
     validations:
       required: true
 
