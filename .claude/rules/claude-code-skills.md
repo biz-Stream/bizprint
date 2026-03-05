@@ -38,3 +38,4 @@ Git 管理から除外されてしまう。
 | `create-pr` | GitHub PR 作成 |
 | `review-pr` | GitHub PR のコードレビュー・コメント投稿 |
 | `check-review` | PR レビューコメント取得・指摘対応支援 |
+| `create-release` | GitHub リリース作成（タグ push でワークフロー起動） |

@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    name: Build and Release
+    runs-on: [self-hosted, windows-public-runner]
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check Java version
+        run: java -version
+
+      - name: Build with Maven
+        run: mvn clean install -B
+
+      - name: Determine if prerelease
+        id: prerelease
+        shell: bash
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          if echo "$TAG" | grep -qE '-(alpha|beta|rc)'; then
+            echo "is_prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2
+        with:
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          prerelease: ${{ steps.prerelease.outputs.is_prerelease == 'true' }}
+          files: |
+            bizprint-server-java/target/*.zip
+            bizprint-server-java/target/*.tar.gz
+            bizprint-server-csharp/target/*.zip
+            bizprint-client/target/BatchPrint-OSS-Setup-*.exe
+            bizprint-client/target/DirectPrint-OSS-Setup-*.exe
