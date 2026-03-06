@@ -32,7 +32,7 @@
         <entry key="loadRetryNum" type="string">5</entry>
         <entry key="loadRetryWaitMsec" type="string">1000</entry>
         <entry key="port" type="string">3000</entry>
-        <entry key="printFormTimerInterval" type="string">100</entry>
+        <entry key="printFormTimerInterval" type="string">300</entry>
         <entry key="printProcessThreadWaitMsec" type="string">100</entry>
         <entry key="printformbythread" type="string">auto</entry>
         <entry key="queueSize" type="string">100</entry>
