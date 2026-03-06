@@ -45,6 +45,9 @@ public class DirectPrintSample extends HttpServlet {
     /** プリンタ名 */
     private static final String PRINTER_NAME = "Microsoft Print to PDF";
 
+    /** 印刷応答URL（印刷結果を受け取るサーブレットのURL） */
+    private static final String RESPONSE_URL = "http://localhost:8080/DirectPrintResultSample";
+
     // ==================================================
 
     // HTTP Post リクエストの処理
@@ -59,6 +62,9 @@ public class DirectPrintSample extends HttpServlet {
 
         // ダイレクト印刷ストリームの生成
         PDFDirectPrintStream direct = new PDFDirectPrintStream(response);
+
+        // 印刷応答URL（印刷完了後にクライアントがこのURLに結果を通知する）
+        direct.setResponseUrl(RESPONSE_URL);
 
         // プリンタ名
         direct.setPrinterName(PRINTER_NAME);
