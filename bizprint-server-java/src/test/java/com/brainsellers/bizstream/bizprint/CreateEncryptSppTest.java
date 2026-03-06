@@ -97,19 +97,19 @@ public class CreateEncryptSppTest {
         String password = getPassword("");
         byte[] result = spp.createCompressedSpp("printerName=test", "testjob", pdf);
 
-        ZipInputStream zis = new ZipInputStream(
-                new ByteArrayInputStream(result), password.toCharArray());
-        int entryCount = 0;
-        LocalFileHeader header;
-        while ((header = zis.getNextEntry()) != null) {
-            entryCount++;
-            byte[] buf = new byte[4096];
-            while (zis.read(buf) != -1) {
-                // drain
+        try (ZipInputStream zis = new ZipInputStream(
+                new ByteArrayInputStream(result), password.toCharArray())) {
+            int entryCount = 0;
+            LocalFileHeader header;
+            while ((header = zis.getNextEntry()) != null) {
+                entryCount++;
+                byte[] buf = new byte[4096];
+                while (zis.read(buf) != -1) {
+                    // drain
+                }
             }
+            assertEquals(2, entryCount);
         }
-        zis.close();
-        assertEquals(2, entryCount);
     }
 
     @Test
@@ -120,21 +120,21 @@ public class CreateEncryptSppTest {
         String password = getPassword("");
         byte[] result = spp.createCompressedSpp("printerName=test", "myjob", pdf);
 
-        ZipInputStream zis = new ZipInputStream(
-                new ByteArrayInputStream(result), password.toCharArray());
-        LocalFileHeader header1 = zis.getNextEntry();
-        assertEquals("param.txt", header1.getFileName());
-        byte[] buf = new byte[4096];
-        while (zis.read(buf) != -1) {
-            // drain
-        }
+        try (ZipInputStream zis = new ZipInputStream(
+                new ByteArrayInputStream(result), password.toCharArray())) {
+            LocalFileHeader header1 = zis.getNextEntry();
+            assertEquals("param.txt", header1.getFileName());
+            byte[] buf = new byte[4096];
+            while (zis.read(buf) != -1) {
+                // drain
+            }
 
-        LocalFileHeader header2 = zis.getNextEntry();
-        assertEquals("myjob.pdf", header2.getFileName());
-        while (zis.read(buf) != -1) {
-            // drain
+            LocalFileHeader header2 = zis.getNextEntry();
+            assertEquals("myjob.pdf", header2.getFileName());
+            while (zis.read(buf) != -1) {
+                // drain
+            }
         }
-        zis.close();
     }
 
     @Test
@@ -145,20 +145,20 @@ public class CreateEncryptSppTest {
         String password = getPassword("");
         byte[] result = spp.createCompressedSpp("printerName=test", "myjob.pdf", pdf);
 
-        ZipInputStream zis = new ZipInputStream(
-                new ByteArrayInputStream(result), password.toCharArray());
-        zis.getNextEntry();
-        byte[] buf = new byte[4096];
-        while (zis.read(buf) != -1) {
-            // drain
-        }
+        try (ZipInputStream zis = new ZipInputStream(
+                new ByteArrayInputStream(result), password.toCharArray())) {
+            zis.getNextEntry();
+            byte[] buf = new byte[4096];
+            while (zis.read(buf) != -1) {
+                // drain
+            }
 
-        LocalFileHeader header2 = zis.getNextEntry();
-        assertEquals("myjob.pdf", header2.getFileName());
-        while (zis.read(buf) != -1) {
-            // drain
+            LocalFileHeader header2 = zis.getNextEntry();
+            assertEquals("myjob.pdf", header2.getFileName());
+            while (zis.read(buf) != -1) {
+                // drain
+            }
         }
-        zis.close();
     }
 
     @Test
@@ -170,11 +170,11 @@ public class CreateEncryptSppTest {
         String password = getPassword("userpass");
         byte[] result = spp.createCompressedSpp("printerName=test", "testjob", pdf);
 
-        ZipInputStream zis = new ZipInputStream(
-                new ByteArrayInputStream(result), password.toCharArray());
-        LocalFileHeader header = zis.getNextEntry();
-        assertNotNull(header);
-        zis.close();
+        try (ZipInputStream zis = new ZipInputStream(
+                new ByteArrayInputStream(result), password.toCharArray())) {
+            LocalFileHeader header = zis.getNextEntry();
+            assertNotNull(header);
+        }
     }
 
     @Test
@@ -186,19 +186,19 @@ public class CreateEncryptSppTest {
         String password = getPassword("");
         byte[] result = spp.createCompressedSpp(paramText, "testjob", pdf);
 
-        ZipInputStream zis = new ZipInputStream(
-                new ByteArrayInputStream(result), password.toCharArray());
-        zis.getNextEntry();
+        try (ZipInputStream zis = new ZipInputStream(
+                new ByteArrayInputStream(result), password.toCharArray())) {
+            zis.getNextEntry();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] buf = new byte[4096];
-        int len;
-        while ((len = zis.read(buf)) != -1) {
-            baos.write(buf, 0, len);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte[] buf = new byte[4096];
+            int len;
+            while ((len = zis.read(buf)) != -1) {
+                baos.write(buf, 0, len);
+            }
+            String content = baos.toString("UTF-8");
+            assertEquals(paramText, content);
         }
-        String content = baos.toString("UTF-8");
-        assertEquals(paramText, content);
-        zis.close();
     }
 
     // --- setPassword ---
