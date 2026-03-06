@@ -42,14 +42,75 @@ EOF
 )"
 ```
 
-### 3. レビューの案内
+### 3. レビューの案内とポーリング
 
 PR 作成が完了したら、ユーザーに以下を案内する:
 
-> PR を作成しました。コードレビューは **別の Claude Code セッション** で `/review-pr <PR番号>` を実行してください。
-> 同じセッションでレビューすると、実装時のコンテキストが残っており確証バイアスが働くため、別セッションでの実行を推奨します。
+> PR を作成しました。**別のターミナル**で以下を実行してレビューしてください:
 >
-> レビュー完了後、このセッションに戻って `/check-review <PR番号>` を実行すると、指摘事項を取得して対応できます。
+> ```
+> claude
+> /review-pr <PR番号>
+> ```
+>
+> このセッションでレビューコメントを監視しています。
+> レビューが投稿されたら自動で指摘対応を開始します。
+
+案内後、バックグラウンドでレビューコメントのポーリングを開始する。
+
+#### ポーリング手順
+
+以下のコマンドをバックグラウンドで実行する（`run_in_background` を使用）:
+
+```bash
+PR_NUM=<PR番号>
+INTERVAL=30
+REPO=$(gh repo view --json nameWithOwner -q '.nameWithOwner')
+
+while true; do
+  FOUND=$(gh api "repos/${REPO}/issues/${PR_NUM}/comments?per_page=100&sort=created&direction=desc" 2>/dev/null \
+    | python3 -c "
+import sys, json
+comments = json.load(sys.stdin)
+for c in comments:
+    if 'Reviewed by Claude Code' in c.get('body', ''):
+        print(c['body'])
+        sys.exit(0)
+sys.exit(1)
+" 2>/dev/null)
+
+  if [ $? -eq 0 ]; then
+    echo "$FOUND"
+    exit 0
+  fi
+
+  sleep "$INTERVAL"
+done
+```
+
+#### レビューコメント検知後
+
+ポーリングタスクの完了通知を受けたら、以下の順で結果を取得する:
+
+1. TaskOutput でバックグラウンドタスクの出力を取得する
+2. 取得できない場合（タスク消失等）は、GitHub API で直接取得する:
+
+```bash
+PR_NUM=<PR番号>
+REPO=$(gh repo view --json nameWithOwner -q '.nameWithOwner')
+gh api "repos/${REPO}/issues/${PR_NUM}/comments?per_page=100&sort=created&direction=desc" 2>/dev/null \
+  | python3 -c "
+import sys, json
+comments = json.load(sys.stdin)
+for c in comments:
+    if 'Reviewed by Claude Code' in c.get('body', ''):
+        print(c['body'])
+        sys.exit(0)
+"
+```
+
+レビューコメントを取得したら、`/check-review` スキルの手順に従って
+指摘事項への対応を自動で開始する。
 
 ### 注意事項
 
