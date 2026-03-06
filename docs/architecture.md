@@ -192,7 +192,7 @@ sequenceDiagram
     end
     PF ->> Mon: スプーラー監視開始
     PF ->> Acrobat: printAll / printPages (印刷命令)
-    Note over PF: printFormTimerInterval (default: 100ms)<br/>タイマーでスプール状態を定期チェック
+    Note over PF: printFormTimerInterval (default: 300ms)<br/>タイマーでスプール状態を定期チェック
     Acrobat ->> Spool: 印刷ジョブ送信
     Mon -->> PF: ジョブ検知 (IsJobSetted=true)
     Note over PF,Spool: spoolTimeOut の実効値でタイムアウト判定<br/>(詳細は下記注記参照)
@@ -202,7 +202,7 @@ sequenceDiagram
 |---|---|---|---|
 | `loadRetryNum` | DirectPrintService.xml | 5 回 | PDF ロードのリトライ回数 |
 | `loadRetryWaitMsec` | DirectPrintService.xml | 1000ms | PDF ロードのリトライ待機時間 |
-| `printFormTimerInterval` | DirectPrintService.xml | 100ms | スプール状態チェックのタイマー間隔 |
+| `printFormTimerInterval` | DirectPrintService.xml | 300ms | スプール状態チェックのタイマー間隔 |
 | `spoolTimeOut` | DirectPrintService.xml | 60000ms | スプーラー監視タイムアウト（設定値） |
 
 > **`spoolTimeOut` の実効値について**
