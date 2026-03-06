@@ -65,9 +65,11 @@ PR 作成が完了したら、ユーザーに以下を案内する:
 ```bash
 PR_NUM=<PR番号>
 INTERVAL=30
+MAX_WAIT=7200
 REPO=$(gh repo view --json nameWithOwner -q '.nameWithOwner')
+ELAPSED=0
 
-while true; do
+while [ "$ELAPSED" -lt "$MAX_WAIT" ]; do
   FOUND=$(gh api "repos/${REPO}/issues/${PR_NUM}/comments?per_page=100&sort=created&direction=desc" 2>/dev/null \
     | python3 -c "
 import sys, json
@@ -85,7 +87,11 @@ sys.exit(1)
   fi
 
   sleep "$INTERVAL"
+  ELAPSED=$((ELAPSED + INTERVAL))
 done
+
+echo "TIMEOUT: ${MAX_WAIT}秒経過してもレビューコメントが検出されませんでした。"
+exit 1
 ```
 
 #### レビューコメント検知後
