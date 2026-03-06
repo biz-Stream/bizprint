@@ -55,15 +55,15 @@ public class DirectPrintResultSample extends HttpServlet {
         pw.println("</head>");
         pw.println("<body>");
         pw.println("<br>");
-        pw.println("RESULT = " + request.getParameter("RESULT"));
+        pw.println("RESULT = " + escapeHtml(request.getParameter("RESULT")));
         pw.println("<br>");
-        pw.println("ERROR_CODE = " + request.getParameter("ERROR_CODE"));
+        pw.println("ERROR_CODE = " + escapeHtml(request.getParameter("ERROR_CODE")));
         pw.println("<br>");
-        pw.println("ERROR_CAUSE = " + request.getParameter("ERROR_CAUSE"));
+        pw.println("ERROR_CAUSE = " + escapeHtml(request.getParameter("ERROR_CAUSE")));
         pw.println("<br>");
         String s = request.getParameter("ERROR_DETAILS");
         if (s != null) {
-            pw.println("ERROR_DETAILS = " + URLDecoder.decode(s, "UTF-8"));
+            pw.println("ERROR_DETAILS = " + escapeHtml(URLDecoder.decode(s, "UTF-8")));
         } else {
             pw.println("ERROR_DETAILS = null");
         }
@@ -71,5 +71,13 @@ public class DirectPrintResultSample extends HttpServlet {
         pw.println("</body>");
         pw.println("</html>");
         pw.close();
+    }
+
+    private static String escapeHtml(String s) {
+        if (s == null) {
+            return "null";
+        }
+        return s.replace("&", "&amp;").replace("<", "&lt;")
+                .replace(">", "&gt;").replace("\"", "&quot;");
     }
 }
