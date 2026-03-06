@@ -74,11 +74,11 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <!-- 読み込んだプロパティをログに出力 -->
                                 <echo message="Submodule - Random String 1: ${randomString1}" />
                                 <echo message="Submodule - Random String 2: ${randomString2}" />
-                            </tasks>
+                            </target>
                         </configuration>
                     </execution>
                     <execution>
@@ -89,7 +89,7 @@
                         </goals>
                         <configuration>
                             <exportAntProperties>true</exportAntProperties>
-                            <tasks>
+                            <target>
                                 <!-- プロジェクトのソースディレクトリをコピー -->
                                 <mkdir dir="${project.build.directory}/temp-src"/>
                                 <copy todir="${project.build.directory}/temp-src">
@@ -118,7 +118,7 @@
 
                                 <!-- コピーしたテンポラリフォルダのパスをMavenプロパティに設定 -->
                                 <property name="build.srcDirectory" value="${project.build.directory}/temp-src"/>
-                             </tasks>
+                             </target>
                         </configuration>
                     </execution>
                 </executions>
@@ -151,6 +151,25 @@
                             </resources>
                         </configuration>
                     </execution>
+                    <!-- src/bin/Releaseフォルダに出来た成果物をtargetへコピー -->
+                    <execution>
+                        <id>copy-release-files</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/bin/Release</directory>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 
@@ -172,33 +191,6 @@
                                 <argument>src/BizPrint-Server-CSharp.csproj</argument>
                                 <argument>/p:Configuration=Release</argument>
                             </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- src/bin/Releaseフォルダに出来た成果物をtargetへコピー -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-release-files</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/bin/Release</directory>
-                                    <includes>
-                                        <include>**/*</include>
-                                    </includes>
-                                </resource>
-                            </resources>
                         </configuration>
                     </execution>
                 </executions>
