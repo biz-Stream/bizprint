@@ -60,6 +60,9 @@ public class BatchPrintSample {
      */
     private static final int STATUS_INTERVAL = 3000;
 
+    /** 印刷要求の最大リトライ回数。エラー発生時にPDF送信からやり直す回数の上限 */
+    private static final int MAX_RETRY = 100;
+
     // ==================================================
 
     public static void main(String[] args) {
@@ -79,6 +82,8 @@ public class BatchPrintSample {
      * PDF送信からやり直す。
      */
     private void execute() throws Exception {
+        int retryCount = 0;
+
         // 印刷のループ
         // 通常は1回で抜けるが、PDF送信からやり直した場合は複数回ループする
         PRINT_LOOP : while (true) {
@@ -118,6 +123,7 @@ public class BatchPrintSample {
                 System.err.println("【エラー2】バッチ印刷の印刷要求結果を取得できませんでした。再度PDF送信からやり直します。");
 
                 // 待ち時間の後、再度印刷要求を行う
+                checkRetryLimit(++retryCount);
                 sleep();
                 continue PRINT_LOOP;
             }
@@ -131,6 +137,7 @@ public class BatchPrintSample {
                     System.err.println("【エラー3】バッチ印刷でエラーが発生しました。再度PDF送信からやり直します。エラーコード: " + errorCode + ", エラーメッセージ: " + errorDetails);
 
                     // 待ち時間の後、再度印刷要求を行う
+                    checkRetryLimit(++retryCount);
                     sleep();
                     continue PRINT_LOOP;
                 } else {
@@ -160,6 +167,7 @@ public class BatchPrintSample {
                         // 二重に印刷される可能性を許容する場合はこちらのロジックを使用する
                         System.err.println("【エラー5】バッチ印刷の印刷状態を取得できませんでした。再度PDF送信からやり直します。");
                         // 待ち時間の後、再度印刷要求を行う
+                        checkRetryLimit(++retryCount);
                         sleep();
                         continue PRINT_LOOP;
 
@@ -202,6 +210,7 @@ public class BatchPrintSample {
                         // 二重に印刷される可能性を許容する場合はこちらのロジックを使用する
                         System.err.println("【エラー6】バッチ印刷の印刷状態を取得できませんでした。再度PDF送信からやり直します。");
                         // 待ち時間の後、再度印刷要求を行う
+                        checkRetryLimit(++retryCount);
                         sleep();
                         continue PRINT_LOOP;
 
@@ -243,6 +252,7 @@ public class BatchPrintSample {
                             System.err.println("【エラー7】バッチ印刷でエラーが発生しました。再度PDF送信からやり直します。エラーコード: " + errorCode + ", エラーメッセージ: " + errorDetails);
 
                             // 待ち時間の後、再度印刷要求を行う
+                            checkRetryLimit(++retryCount);
                             sleep();
                             continue PRINT_LOOP;
                         } else {
@@ -327,12 +337,25 @@ public class BatchPrintSample {
     }
 
     /**
+     * リトライ回数が上限に達していないかチェックする。
+     *
+     * @param retryCount 現在のリトライ回数
+     * @throws Exception リトライ上限に達した場合
+     */
+    private void checkRetryLimit(int retryCount) throws Exception {
+        if (retryCount >= MAX_RETRY) {
+            throw new Exception("リトライ回数が上限(" + MAX_RETRY + "回)に達しました。プログラムを終了します。");
+        }
+    }
+
+    /**
      * 指定した時間待つ。
      */
     private void sleep() {
         try {
             Thread.sleep(STATUS_INTERVAL);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             e.printStackTrace();
         }
     }
