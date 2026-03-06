@@ -9,6 +9,9 @@ on:
       - main
   workflow_dispatch: # 手動実行も可能
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Build on Windows Runner
