@@ -23,14 +23,15 @@ jobs:
 
       - name: Determine if prerelease
         id: prerelease
-        shell: bash
+        shell: pwsh
+        env:
+          TAG: ${{ github.ref_name }}
         run: |
-          TAG="${GITHUB_REF#refs/tags/}"
-          if echo "$TAG" | grep -qE '-(alpha|beta|rc)'; then
-            echo "is_prerelease=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "is_prerelease=false" >> "$GITHUB_OUTPUT"
-          fi
+          if ($env:TAG -match '-(alpha|beta|rc)') {
+            "is_prerelease=true" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
+          } else {
+            "is_prerelease=false" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
+          }
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2
