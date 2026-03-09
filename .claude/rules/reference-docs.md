@@ -1,3 +1,11 @@
+---
+globs:
+  - "bizprint-server-java/**/*.java"
+  - "bizprint-server-csharp/**/*.cs"
+  - "bizprint-client/**/*.cs"
+  - "docs/**"
+---
+
 # リファレンスドキュメントの同期
 
 ## 更新ルール
