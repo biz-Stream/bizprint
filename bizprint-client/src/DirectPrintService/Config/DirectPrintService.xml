@@ -40,7 +40,7 @@
         <entry key="printDlgLeaveTimeOut" type="string">3</entry>
         <entry key="printDlgName" type="string">印刷|進行状況</entry>
         <entry key="printDlgStayingTimeCheck" type="string">60000</entry>
-        <entry key="printFormTimerInterval" type="string">300</entry>
+        <entry key="printFormTimerInterval" type="string">500</entry>
         <entry key="printProcessThreadWaitMsec" type="string">100</entry>
         <entry key="printformbythread" type="string">auto</entry>
         <entry key="queueSize" type="string">100</entry>
