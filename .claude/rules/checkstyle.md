@@ -1,3 +1,9 @@
+---
+globs:
+  - "bizprint-server-java/**/*.java"
+  - "config/checkstyle/**"
+---
+
 # CheckStyle コーディング規約
 
 ## コミット前の確認手順

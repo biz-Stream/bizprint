@@ -1,3 +1,8 @@
+---
+globs:
+  - ".claude/skills/**"
+---
+
 # Claude Code スキル設定ルール
 
 このプロジェクトで Claude Code のカスタムスキルを追加・変更する際のルール。
