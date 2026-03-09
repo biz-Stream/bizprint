@@ -1,5 +1,8 @@
 ---
 globs:
+  - "bizprint-server-java/**/*.java"
+  - "bizprint-server-csharp/**/*.cs"
+  - "bizprint-client/**/*.cs"
   - "docs/**"
 ---
 
