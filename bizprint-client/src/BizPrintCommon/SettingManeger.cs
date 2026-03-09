@@ -111,7 +111,7 @@ namespace BizPrintCommon
         ///<summary>プログラムの再起動フラグ</summary>
         public bool DoRestartNow { get; set; } = false;
         ///<summary>印刷フォームのタイマインターバル(msec)</summary>
-        public int PrintFormTimerInterval { get; set; } = 100;
+        public int PrintFormTimerInterval { get; set; } = 500;
         ///<summary>印刷スレッドのループ待機時間(msec)</summary>
         public int PrintProcessThreadWaitMsec { get; set; } = 100;
         ///<summary>ロード失敗時のリトライ回数</summary>

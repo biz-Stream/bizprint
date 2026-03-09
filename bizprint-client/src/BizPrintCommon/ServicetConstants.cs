@@ -148,7 +148,7 @@ namespace BizPrintCommon
 
         /// INIファイル読み込みキーとデフォルト値(印刷フォームのタイマインターバル)
         public const string INI_PRINTFORM_TIMER_INTREVAL = "printFormTimerInterval";
-        public const int DEFAULT_PRINTFORM_TIMER_INTREVAL = 100;
+        public const int DEFAULT_PRINTFORM_TIMER_INTREVAL = 500;
 
         /// INIファイル読み込みキーとデフォルト値(印刷スレッドのループ待機時間)
         public const string INI_PRINTTHREAD_WAIT_MSEC = "printProcessThreadWaitMsec";
