@@ -42,6 +42,7 @@ gh run list --branch <ブランチ名> --limit 1 --json status,conclusion,name 2
 - conclusion が "failure" または "cancelled" → 「CI が失敗しました（conclusion: <値>）。確認してください。」と報告してください。
 - status が "in_progress" または "queued" → 何も報告せず、次の実行を待ってください。
 - レスポンスが空配列の場合 → 「CI ワークフローが見つかりません。PR 作成に進みます。」と報告してください。
+- 上記いずれにも該当しない場合 → 「CI の状態が不明です（status: <値>, conclusion: <値>）。確認してください。」と報告してください。
 ```
 
 #### CI 待ち Cron の検知後

@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "IN_PROJECT=$(python3 -c \"import sys,json,os; fp=os.path.normcase(os.path.abspath(json.load(sys.stdin).get('tool_input',{}).get('file_path',''))); pd=os.path.normcase(os.path.abspath(os.environ.get('CLAUDE_PROJECT_DIR',''))); print('1' if fp.startswith(pd+os.sep) or fp==pd else '0')\" 2>/dev/null); if [ \"$IN_PROJECT\" = '0' ]; then exit 0; fi; BRANCH=$(git -C \"$CLAUDE_PROJECT_DIR\" rev-parse --abbrev-ref HEAD 2>/dev/null); if [ \"$BRANCH\" = 'main' ]; then echo 'main ブランチでの直接編集は禁止です。/start-task でブランチを作成してください。' >&2; exit 2; fi"
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/scripts/guard-main-branch.sh\""
           }
         ]
       }
