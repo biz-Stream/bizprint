@@ -19,7 +19,45 @@ GitHub プルリクエストを作成するワークフロー。
 
 `.github/pull_request_template.md` を読み込み、テンプレート構造に準拠する。
 
-### 2. PR 作成
+### 2. CI パイプラインの完了待ち
+
+プッシュ済みのブランチで GitHub Actions が実行中の場合、完了を待つ。
+CronCreate ツールでポーリングを作成し、ワークフローの状態を監視する。
+
+#### CI 待ち Cron の作成
+
+CronCreate ツールを以下のパラメータで呼び出す:
+
+- **cron**: `* * * * *`（1分間隔）
+- **recurring**: `true`
+- **prompt**:
+
+```
+以下のコマンドで CI ワークフローの状態を確認してください:
+
+gh run list --branch <ブランチ名> --limit 1 --json status,conclusion,name 2>/dev/null
+
+レスポンスの最初の要素を確認し:
+- conclusion が "success" → 「CI が成功しました。PR 作成に進みます。」と報告してください。
+- conclusion が "failure" または "cancelled" → 「CI が失敗しました（conclusion: <値>）。確認してください。」と報告してください。
+- status が "in_progress" または "queued" → 何も報告せず、次の実行を待ってください。
+- レスポンスが空配列の場合 → 「CI ワークフローが見つかりません。PR 作成に進みます。」と報告してください。
+- 上記いずれにも該当しない場合 → 「CI の状態が不明です（status: <値>, conclusion: <値>）。確認してください。」と報告してください。
+```
+
+#### CI 待ち Cron の検知後
+
+ワークフローの状態が報告されたら、**即座に CronDelete で当該 Cron を削除**してから次のステップに進む。
+
+- 成功 / ワークフローなし → PR 作成に進む
+- 失敗 → ユーザーに確認する
+
+#### CI 待ちのスキップ
+
+ユーザーが CI 待ちをスキップしたい場合（ドキュメントのみの変更等）は、
+このステップを省略して PR 作成に進む。
+
+### 3. PR 作成
 
 ```bash
 gh pr create \
@@ -42,7 +80,7 @@ EOF
 )"
 ```
 
-### 3. レビューの案内とポーリング
+### 4. レビューの案内とポーリング
 
 PR 作成が完了したら、ユーザーに以下を案内する:
 
@@ -56,64 +94,37 @@ PR 作成が完了したら、ユーザーに以下を案内する:
 > このセッションでレビューコメントを監視しています。
 > レビューが投稿されたら自動で指摘対応を開始します。
 
-案内後、バックグラウンドでレビューコメントのポーリングを開始する。
+案内後、CronCreate ツールでレビューコメントのポーリングを開始する。
 
-#### ポーリング手順
+#### レビュー監視 Cron の作成
 
-以下のコマンドをバックグラウンドで実行する（`run_in_background` を使用）:
+**PR 作成時点の現在時刻を ISO 8601 形式で記録**し（例: `2026-03-10T12:00:00Z`）、
+CronCreate ツールを以下のパラメータで呼び出す:
 
-```bash
-PR_NUM=<PR番号>
-INTERVAL=30
-MAX_WAIT=7200
+- **cron**: `* * * * *`（1分間隔）
+- **recurring**: `true`
+- **prompt**:
+
+```
+以下のコマンドで PR <PR番号> のレビューコメントを確認してください:
+
 REPO=$(gh repo view --json nameWithOwner -q '.nameWithOwner')
-ELAPSED=0
+gh api "repos/${REPO}/issues/<PR番号>/comments?per_page=100&sort=created&direction=desc" 2>/dev/null
 
-while [ "$ELAPSED" -lt "$MAX_WAIT" ]; do
-  FOUND=$(gh api "repos/${REPO}/issues/${PR_NUM}/comments?per_page=100&sort=created&direction=desc" 2>/dev/null \
-    | python3 -c "
-import sys, json
-comments = json.load(sys.stdin)
-for c in comments:
-    if 'Reviewed by Claude Code' in c.get('body', ''):
-        print(c['body'])
-        sys.exit(0)
-sys.exit(1)
-" 2>/dev/null)
+レスポンスの各コメントを確認し、以下の条件をすべて満たすコメントがあるか確認してください:
+1. body に「Reviewed by Claude Code」を含むこと
+2. created_at が <PR作成時刻の ISO 8601> より後であること
 
-  if [ $? -eq 0 ]; then
-    echo "$FOUND"
-    exit 0
-  fi
-
-  sleep "$INTERVAL"
-  ELAPSED=$((ELAPSED + INTERVAL))
-done
-
-echo "TIMEOUT: ${MAX_WAIT}秒経過してもレビューコメントが検出されませんでした。"
-exit 1
+- 条件を満たすコメントが見つかった場合 → コメントの body 全文を報告し、「レビューコメントを検知しました。」と報告してください。
+- 見つからない場合 → 何も報告せず、次の実行を待ってください。
 ```
 
 #### レビューコメント検知後
 
-ポーリングタスクの完了通知を受けたら、GitHub API で結果を取得する:
+レビューコメントが検知されたら:
 
-```bash
-PR_NUM=<PR番号>
-REPO=$(gh repo view --json nameWithOwner -q '.nameWithOwner')
-gh api "repos/${REPO}/issues/${PR_NUM}/comments?per_page=100&sort=created&direction=desc" 2>/dev/null \
-  | python3 -c "
-import sys, json
-comments = json.load(sys.stdin)
-for c in comments:
-    if 'Reviewed by Claude Code' in c.get('body', ''):
-        print(c['body'])
-        sys.exit(0)
-"
-```
-
-レビューコメントを取得したら、`/check-review` スキルの手順に従って
-指摘事項への対応を自動で開始する。
+1. **即座に CronDelete で当該 Cron を削除する**
+2. `/check-review` スキルの手順に従って指摘事項への対応を開始する
 
 ### 注意事項
 

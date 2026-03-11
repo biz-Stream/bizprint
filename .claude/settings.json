@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/scripts/guard-main-branch.sh\""
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && echo '=== コンテキスト圧縮後の作業コンテキスト ===' && echo \"ブランチ: $(git rev-parse --abbrev-ref HEAD 2>/dev/null)\" && echo '--- 最近のコミット (5件) ---' && git log --oneline -5 2>/dev/null && echo '--- 変更中のファイル ---' && git status --short 2>/dev/null && echo '==='"
+          }
+        ]
+      }
+    ]
+  }
+}
