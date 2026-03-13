@@ -24,7 +24,7 @@
 ; 会社やサイトなど
 #define MyAppPublisher "ブレインセラーズ・ドットコム株式会社"
 ; プログラムを提供するURLなど
-#define MyAppURL "https://github.com/biz-Stream/bizprint"
+#define MyAppURL "https://github.com/brainsellers-com/bizprint"
 ; プログラムの実行ファイル名
 #define MyAppExeName "DirectPrintService.exe"
 ; インストーラのファイル名 (バージョン番号と.exeより前の部分)
@@ -191,7 +191,7 @@ Name: "{commonappdata}\brainsellers\DirectPrint\tmp"; Permissions: everyone-full
 ; スタートメニューやデスクトップにショートカットアイコンを登録する設定
 ;-------------------------------------------------------------------------
 [Icons]
-Name: "{group}\GitHub"; Filename: "https://github.com/biz-Stream/bizprint"; WorkingDir: "{autoprograms}"
+Name: "{group}\GitHub"; Filename: "https://github.com/brainsellers-com/bizprint"; WorkingDir: "{autoprograms}"
 Name: "{group}\設定フォルダ"; Filename: "{commonappdata}\brainsellers\DirectPrint"; WorkingDir: "{autoprograms}"
 Name: "{group}\{#MyAppName}のアンインストール"; Filename: "{uninstallexe}"; IconFilename: "{uninstallexe}"
 

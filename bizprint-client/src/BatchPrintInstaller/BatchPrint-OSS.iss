@@ -24,7 +24,7 @@
 ; 会社やサイトなど
 #define MyAppPublisher "ブレインセラーズ・ドットコム株式会社"
 ; プログラムを提供するURLなど
-#define MyAppURL "https://github.com/biz-Stream/bizprint"
+#define MyAppURL "https://github.com/brainsellers-com/bizprint"
 ; プログラムの実行ファイル名
 #define MyAppExeName "BatchPrintService.exe"
 ; インストーラのファイル名 (バージョン番号と.exeより前の部分)
@@ -184,7 +184,7 @@ Name: "{commonappdata}\brainsellers\BatchPrint\tmp"; Permissions: everyone-full
 [Icons]
 ;Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-Name: "{group}\GitHub"; Filename: "https://github.com/biz-Stream/bizprint"; WorkingDir: "{autoprograms}"
+Name: "{group}\GitHub"; Filename: "https://github.com/brainsellers-com/bizprint"; WorkingDir: "{autoprograms}"
 Name: "{group}\設定フォルダ"; Filename: "{commonappdata}\brainsellers\BatchPrint"; WorkingDir: "{autoprograms}"
 Name: "{group}\{#MyAppName}のアンインストール"; Filename: "{uninstallexe}"; IconFilename: "{uninstallexe}"
 ;Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon

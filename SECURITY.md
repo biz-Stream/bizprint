@@ -9,7 +9,7 @@
 
 GitHub の **Private vulnerability reporting** 機能を使用してください。
 
-1. [bizprint のセキュリティページ](https://github.com/biz-Stream/bizprint/security) にアクセス
+1. [bizprint のセキュリティページ](https://github.com/brainsellers-com/bizprint/security) にアクセス
 2. 「Report a vulnerability」をクリック
 3. 脆弱性の詳細を記入して送信
 

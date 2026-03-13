@@ -74,9 +74,9 @@
 - 暗号化キー自動生成に対応
 - Inno Setup インストーラーを追加
 
-[Unreleased]: https://github.com/biz-Stream/bizprint/compare/v1.0.0-rc2...HEAD
-[1.0.0-rc2]: https://github.com/biz-Stream/bizprint/compare/v1.0.0-rc1...v1.0.0-rc2
-[1.0.0-rc1]: https://github.com/biz-Stream/bizprint/compare/v1.0.0-alpha3...v1.0.0-rc1
-[1.0.0-alpha3]: https://github.com/biz-Stream/bizprint/compare/v1.0.0-alpha2...v1.0.0-alpha3
-[1.0.0-alpha2]: https://github.com/biz-Stream/bizprint/compare/v1.0.0-alpha1...v1.0.0-alpha2
-[1.0.0-alpha1]: https://github.com/biz-Stream/bizprint/releases/tag/v1.0.0-alpha1
+[Unreleased]: https://github.com/brainsellers-com/bizprint/compare/v1.0.0-rc2...HEAD
+[1.0.0-rc2]: https://github.com/brainsellers-com/bizprint/compare/v1.0.0-rc1...v1.0.0-rc2
+[1.0.0-rc1]: https://github.com/brainsellers-com/bizprint/compare/v1.0.0-alpha3...v1.0.0-rc1
+[1.0.0-alpha3]: https://github.com/brainsellers-com/bizprint/compare/v1.0.0-alpha2...v1.0.0-alpha3
+[1.0.0-alpha2]: https://github.com/brainsellers-com/bizprint/compare/v1.0.0-alpha1...v1.0.0-alpha2
+[1.0.0-alpha1]: https://github.com/brainsellers-com/bizprint/releases/tag/v1.0.0-alpha1
