@@ -66,6 +66,22 @@ mvn clean install
 ### 注意
 - 暗号化キーはビルドのたびにランダム生成される。サーバー側とクライアント側で同じキーが必要なため、**一部モジュールのみのビルドは不可。必ず一括ビルドすること。**
 
+### よく使うコマンド
+
+```bash
+# 一括ビルド（JAVA_HOME に JDK 8 を設定済みであること）
+mvn clean install
+
+# テスト実行
+mvn test -pl bizprint-server-java
+
+# CheckStyle チェック
+mvn checkstyle:check -pl bizprint-server-java -Dcheckstyle.consoleOutput=true
+
+# EditorConfig チェック
+mvn editorconfig:check -pl bizprint-server-java
+```
+
 # 基本方針
 - 既存の慣習（ライブラリ、フレームワーク、コーディングスタイル、命名規則）を尊重する。
 - 指示が曖昧な場合は必ず質問して確認する。
