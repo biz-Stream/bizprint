@@ -58,13 +58,24 @@ bizprint は biz-Stream の印刷系モジュールを独立させたもの。
 - Inno Setup 6 以上
 - Adobe Acrobat Reader（クライアント実行時に必要。ActiveX コントロールを利用）
 
-### ビルド方法
-```bash
-mvn clean install
-```
-
 ### 注意
 - 暗号化キーはビルドのたびにランダム生成される。サーバー側とクライアント側で同じキーが必要なため、**一部モジュールのみのビルドは不可。必ず一括ビルドすること。**
+
+### よく使うコマンド
+
+```bash
+# 一括ビルド（JAVA_HOME に JDK 8 を設定済みであること）
+mvn clean install
+
+# テスト実行
+mvn test -pl bizprint-server-java
+
+# CheckStyle チェック
+mvn checkstyle:check -pl bizprint-server-java -Dcheckstyle.consoleOutput=true
+
+# EditorConfig チェック
+mvn editorconfig:check -pl bizprint-server-java
+```
 
 # 基本方針
 - 既存の慣習（ライブラリ、フレームワーク、コーディングスタイル、命名規則）を尊重する。
@@ -85,6 +96,9 @@ mvn clean install
     ユーザーが同一セッションでの続行を希望した場合はそれに従う。
 
 # コーディング規約
+
+- **CheckStyle**: `.claude/rules/checkstyle.md` に詳細ルールを記載。設定ファイルは `config/checkstyle/checkstyle.xml`
+- **EditorConfig**: `.editorconfig` に準拠
 
 ## Java（bizprint-server-java）
 - JDK 8 互換
