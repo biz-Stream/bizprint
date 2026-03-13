@@ -1,5 +1,5 @@
 blank_issues_enabled: true
 contact_links:
   - name: セキュリティに関する報告
-    url: https://github.com/biz-Stream/bizprint/security
+    url: https://github.com/brainsellers-com/bizprint/security
     about: 脆弱性の報告は Issue ではなく、セキュリティページから非公開で報告してください。
