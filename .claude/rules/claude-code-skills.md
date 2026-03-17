@@ -33,14 +33,3 @@ Git 管理から除外されてしまう。
 リポジトリに追加できない。この場合は `maven-build` のように別名にすること。
 
 スキルを追加したら `git status` で意図通り追跡されているか確認すること。
-
-## 現在登録済みのスキル
-
-| スキル名 | 用途 |
-|---|---|
-| `start-task` | イシュー・ブランチ作成（開発着手前に必須） |
-| `maven-build` | Maven ビルド実行 |
-| `create-pr` | GitHub PR 作成 |
-| `review-pr` | GitHub PR のコードレビュー・コメント投稿 |
-| `check-review` | PR レビューコメント取得・指摘対応支援 |
-| `create-release` | GitHub リリース作成（タグ push でワークフロー起動） |

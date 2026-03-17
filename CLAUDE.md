@@ -1,6 +1,3 @@
-# 目的
-- ユーザー指示に基づき、正確かつ効率的に開発タスクを完了する。
-
 # 製品概要
 bizprint は [biz-Stream](https://www.brainsellers.com/product/bizstream/) 製品のダイレクト印刷・バッチ印刷機能を
 オープンソース化したプロジェクトである（Apache License v2.0）。
@@ -34,6 +31,7 @@ bizprint は biz-Stream の印刷系モジュールを独立させたもの。
 | `bizprint-server-csharp` | C# | spp ファイル生成ライブラリ（サーバー側） |
 | `bizprint-client` | C# | ダイレクト印刷・バッチ印刷 Windows クライアント |
 | `pom.xml`（ルート） | Maven | 一括ビルド用親プロジェクト |
+| `sample/` | — | サンプルコード・動作確認用資材 |
 
 ### bizprint-client の内部構成
 | プロジェクト | 責務 |
@@ -81,44 +79,22 @@ mvn editorconfig:check -pl bizprint-server-java
 - 既存の慣習（ライブラリ、フレームワーク、コーディングスタイル、命名規則）を尊重する。
 - 指示が曖昧な場合は必ず質問して確認する。
 - 機能追加やバグ修正の際は、可能な限りユニットテストを作成・更新する。
-- **AI 駆動開発を前提に設計する。**
-  - ビルド・テスト・実行はすべて Claude Code が `mvn` 等のコマンド一発で完結できる設計にする。
-  - 人間による手動セットアップ（環境変数の設定、ファイルのコピー・編集、bat の順次実行等）を前提とした設計は避ける。
-  - ビルドツールやパッケージマネージャが提供する自動化機能（依存解決、プラグイン等）を最大限活用し、手動で再現しない。
-- **コンテキスト使用量を常に意識する。**
-  - 着手前に作業量が多いと分かっている場合は、ユーザーに伝え、コンテキスト圧縮発生時は
-    出力品質低下の可能性があるためレビュー推奨を注意喚起する。作業計画と進捗は auto memory
-    に記録し、次のセッションでも継続できるようにする。
-  - 作業中にコンテキスト使用量が増大してきたと判断した場合は、ユーザーに警告して作業を
-    一時停止し、進捗を auto memory に保存してからセッション分割を提案する。
-  - 作業をフェーズ分けした場合は、各フェーズの完了時に進捗を auto memory に保存し、
-    次のフェーズは新しいセッションで継続することを推奨する旨をユーザーに提案する。
-    ユーザーが同一セッションでの続行を希望した場合はそれに従う。
+- **AI 駆動開発前提**: ビルド・テスト・実行は `mvn` 等のコマンド一発で完結する設計にする。手動セットアップを前提とした設計は避ける。
+- **コンテキスト管理**: 大きなタスクはセッション分割を提案し、進捗を auto memory に記録する。
 
 # コーディング規約
 
-- **CheckStyle**: `.claude/rules/checkstyle.md` に詳細ルールを記載。設定ファイルは `config/checkstyle/checkstyle.xml`
-- **EditorConfig**: `.editorconfig` に準拠
-
-## Java（bizprint-server-java）
-- JDK 8 互換
-- インデント: スペース4
-- 命名: クラスは PascalCase、メソッド・フィールドは camelCase、定数は UPPER_CASE
-
-## C#（bizprint-server-csharp, bizprint-client）
-- .NET Framework 2.0 以上互換（動作確認は 4.6）
-- 改行: CRLF
-- 既存コードのスタイルに従う
-
-# 安全・制約
-- 破壊的コマンド（例: `rm`）はユーザー許可なく実行しない。
-- 機密情報（APIキー、パスワード、個人情報）を出力しない/DB に保存するコードを書かない。
-- 指示された範囲を超える無関係な変更はしない。
+- **Java**: JDK 8 互換。CheckStyle（`.claude/rules/checkstyle.md`）と EditorConfig（`.editorconfig`）に準拠。
+- **C#**: .NET Framework 2.0 以上互換（動作確認は 4.6）。既存コードのスタイルに従う。
 
 # 出力
-- コード提示時は言語指定付きの Markdown コードブロックを使う。
-- コミュニケーションは簡潔かつ明確に行う。
 - 丸数字（(1)(2)(3)等）は一切使用禁止。番号付きリスト（1. 2. 3.）を使うこと。これはソースコード、ドキュメント、Claude Code の回答すべてに適用する。
+
+# コミットメッセージ規約
+
+- フォーマット: `<プレフィックス> <変更内容の要約（日本語）> (#<イシュー番号>)`
+- プレフィックス: `feat:` / `fix:` / `chore:` / `docs:` / `refactor:` / `test:`
+- 例: `fix: PDF出力時のフォント埋め込みエラーを修正する (#45)`
 
 # ワークフロー（必須）
 
@@ -134,4 +110,5 @@ mvn editorconfig:check -pl bizprint-server-java
 
 ## CI
 - GitHub Actions（self-hosted Windows ランナー）で `mvn clean install` を実行。
-- PR 作成時と main への push 時に自動実行。
+- PR 作成時と main への push 時に自動実行。手動実行（`workflow_dispatch`）も可能。
+- `release.yml`: タグ push 時にリリースワークフローを実行。

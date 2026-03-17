@@ -18,28 +18,17 @@ mvn checkstyle:check -pl <module> -Dcheckstyle.consoleOutput=true
 
 ## ボーイスカウトルール
 
-ファイルを修正したら、**そのファイル全体**を CheckStyle 準拠にする:
-
-1. 未使用 import の削除
-2. import 順序の整理（java → javax → org → com.brainsellers）
-3. スター import の排除（static import は可）
-4. インデントの統一（スペース4）
-5. 中括弧スタイルの統一（K&R: 開き括弧は行末）
-6. フィールド・変数名は camelCase、定数は UPPER_CASE
-7. 演算子の前後にスペースを追加
-8. タブ文字は使用せずスペース4に統一
-
-## よくある違反パターンと対処法
+ファイルを修正したら、**そのファイル全体**を CheckStyle 準拠にする。よくある違反と対処:
 
 | 違反 | 対処 |
 |---|---|
-| `MemberName` / `LocalVariableName` | camelCase にリネーム |
-| `ImportOrder` | IDE の Optimize Imports を使用するか手動で並べ替え |
 | `UnusedImports` | 不要な import を削除 |
-| `AvoidStarImport` | `import java.util.*` → 個別 import に展開 |
+| `ImportOrder` | java → javax → org → com.brainsellers の順に整理 |
+| `AvoidStarImport` | `import java.util.*` → 個別 import に展開（static import は可） |
 | `FileTabCharacter` | タブ → スペース4に変換 |
 | `LeftCurly` | 中括弧を行末に移動（K&R スタイル） |
 | `WhitespaceAround` | 演算子の前後にスペースを追加 |
+| `MemberName` / `LocalVariableName` | camelCase にリネーム |
 | `ConstantName` | 定数は UPPER_CASE にリネーム |
 
 ## EditorConfig（非 Java ファイル）
