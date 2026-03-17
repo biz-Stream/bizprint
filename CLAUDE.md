@@ -90,12 +90,6 @@ mvn editorconfig:check -pl bizprint-server-java
 # 出力
 - 丸数字（(1)(2)(3)等）は一切使用禁止。番号付きリスト（1. 2. 3.）を使うこと。これはソースコード、ドキュメント、Claude Code の回答すべてに適用する。
 
-# コミットメッセージ規約
-
-- フォーマット: `<プレフィックス> <変更内容の要約（日本語）> (#<イシュー番号>)`
-- プレフィックス: `feat:` / `fix:` / `chore:` / `docs:` / `refactor:` / `test:`
-- 例: `fix: PDF出力時のフォント埋め込みエラーを修正する (#45)`
-
 # ワークフロー（必須）
 
 - **リポジトリへのあらゆる変更（コード・ドキュメント・設定ファイル）は、必ず `/start-task` でイシュー作成・ブランチ作成してから行う。**
@@ -107,6 +101,12 @@ mvn editorconfig:check -pl bizprint-server-java
 - すべての変更は PR 経由で行う。
 - PR 本文に `Closes #<イシュー番号>` を記述してイシューと連携する。
 - CI が通っていない PR はマージしない。
+
+## コミットメッセージ規約
+- フォーマット: `<プレフィックス> <変更内容の要約（日本語）> (#<イシュー番号>)`
+- プレフィックス: `feat:` / `fix:` / `chore:` / `docs:` / `refactor:` / `test:`
+- 例: `fix: PDF出力時のフォント埋め込みエラーを修正する (#45)`
+- Claude Code 以外でコミットする場合は末尾に `Co-Authored-By: <モデル名> <noreply@anthropic.com>` を付与する。
 
 ## CI
 - GitHub Actions（self-hosted Windows ランナー）で `mvn clean install` を実行。
