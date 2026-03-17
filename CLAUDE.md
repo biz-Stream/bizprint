@@ -106,7 +106,7 @@ mvn editorconfig:check -pl bizprint-server-java
 - フォーマット: `<プレフィックス> <変更内容の要約（日本語）> (#<イシュー番号>)`
 - プレフィックス: `feat:` / `fix:` / `chore:` / `docs:` / `refactor:` / `test:`
 - 例: `fix: PDF出力時のフォント埋め込みエラーを修正する (#45)`
-- Claude Code 以外でコミットする場合は末尾に `Co-Authored-By: <モデル名> <noreply@anthropic.com>` を付与する。
+- Claude Code がコミットする場合は末尾に `Co-Authored-By: <モデル名> <noreply@anthropic.com>` を付与する。
 
 ## CI
 - GitHub Actions（self-hosted Windows ランナー）で `mvn clean install` を実行。
