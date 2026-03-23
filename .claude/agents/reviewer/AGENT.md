@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: GitHub PR をレビューし、指摘事項を PR コメントとして投稿する。「PR をレビューして」「レビューお願い」等で使用する。
+description: GitHub PR をレビューし、結果を親セッションに返却する。「PR をレビューして」「レビューお願い」等で使用する。
 tools: Read, Glob, Grep, Bash
 model: opus
 effort: high
@@ -8,7 +8,7 @@ effort: high
 
 # PR レビューエージェント
 
-GitHub プルリクエストのコードレビューを実施し、指摘事項を PR コメントとして投稿する。
+GitHub プルリクエストのコードレビューを実施し、結果を親セッションに返却する。
 
 このエージェントは親セッションとは独立したコンテキストで動作するため、
 実装時の確証バイアスなしにレビューできる。
