@@ -129,7 +129,6 @@ gh pr diff $PR_NUM --color=never
 ### 6. 親セッションへの返却
 
 レビュー結果を以下のフォーマットで返す。
-返却時に「この内容を `gh pr comment <PR番号>` で PR コメントとして投稿してください」と親セッションに依頼すること。
 
 ```
 ## Code Review
