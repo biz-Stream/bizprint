@@ -1,4 +1,38 @@
 {
+  "permissions": {
+    "allow": [
+      "Read(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "Bash(cd:*)",
+      "Bash(ls:*)",
+      "Bash(file:*)",
+      "Bash(mvn clean*)",
+      "Bash(mvn test*)",
+      "Bash(mvn package*)",
+      "Bash(mvn verify*)",
+      "Bash(mvn compile*)",
+      "Bash(mvn install*)",
+      "Bash(mvn checkstyle:*)",
+      "Bash(mvn editorconfig:*)",
+      "Bash(wc:*)",
+      "Bash(which:*)",
+      "Bash(git:*)",
+      "Bash(tasklist*)",
+      "Bash(gh issue list*)",
+      "Bash(gh issue view*)",
+      "Bash(gh issue create*)",
+      "Bash(gh pr list*)",
+      "Bash(gh pr view*)",
+      "Bash(gh pr create*)",
+      "Bash(gh pr diff*)",
+      "Bash(gh pr comment*)",
+      "Bash(gh run list*)",
+      "Bash(gh run view*)",
+      "Bash(gh api*)",
+      "Bash(gh repo view*)"
+    ]
+  },
   "hooks": {
     "PreToolUse": [
       {
