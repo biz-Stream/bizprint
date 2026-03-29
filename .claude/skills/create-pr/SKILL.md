@@ -46,24 +46,7 @@ CronCreate ツールを以下のパラメータで呼び出す:
 
 - **cron**: `* * * * *`（1分間隔）
 - **recurring**: `true`
-- **prompt**:
-
-```
-以下のコマンドで CI ワークフローの状態を確認してください:
-
-gh run list --branch <ブランチ名> --limit 1 --json status,conclusion,name,createdAt 2>$null
-
-レスポンスを確認し:
-- レスポンスが空配列の場合:
-  - 現在時刻が <PR作成時刻の ISO 8601> から 2 分以上経過している → 「CI ワークフローが見つかりません（CI 対象外の変更です）。」と報告してください。
-  - 2 分未満 → 何も報告せず、次の実行を待ってください。
-- レスポンスの最初の要素の createdAt が <PR作成時刻の ISO 8601> より前の場合 → 上記の空配列と同じ判定をしてください。
-- レスポンスの最初の要素の createdAt が <PR作成時刻の ISO 8601> 以降の場合:
-  - conclusion が "success" → 「CI が成功しました。」と報告してください。
-  - conclusion が "failure" または "cancelled" → 「CI が失敗しました（conclusion: <値>）。確認してください。」と報告してください。
-  - status が "in_progress" または "queued" → 何も報告せず、次の実行を待ってください。
-  - 上記いずれにも該当しない場合 → 「CI の状態が不明です（status: <値>, conclusion: <値>）。確認してください。」と報告してください。
-```
+- **prompt**: `.claude/skills/_shared/ci-monitor-cron.md` を Read し、テンプレートの `<ブランチ名>` と `<基準時刻>` を実際の値（PR 作成時刻）に置き換えて使用する。
 
 #### 2b. pr-reviewer エージェントの起動
 

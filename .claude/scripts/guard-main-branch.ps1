@@ -8,7 +8,7 @@ try {
     $projectDir = [System.IO.Path]::GetFullPath($env:CLAUDE_PROJECT_DIR)
 
     # プロジェクト外ファイルはスルー
-    if (-not $filePath.StartsWith($projectDir + [System.IO.Path]::DirectorySeparatorChar) -and $filePath -ne $projectDir) {
+    if (-not $filePath.StartsWith($projectDir + [System.IO.Path]::DirectorySeparatorChar, [System.StringComparison]::OrdinalIgnoreCase) -and -not $filePath.Equals($projectDir, [System.StringComparison]::OrdinalIgnoreCase)) {
         exit 0
     }
 } catch {

@@ -90,7 +90,7 @@ CronCreate ツールを以下のパラメータで呼び出す:
 
 - **cron**: `* * * * *`（1分間隔）
 - **recurring**: `true`
-- **prompt**: `/create-pr` スキルの「2a. CI 監視 Cron の作成」と同じ形式のプロンプトを使用する。`<PR作成時刻>` を `<プッシュ時刻>` に読み替えること。
+- **prompt**: `.claude/skills/_shared/ci-monitor-cron.md` を Read し、テンプレートの `<ブランチ名>` と `<基準時刻>` を実際の値（プッシュ時刻）に置き換えて使用する。
 
 #### 5b. pr-reviewer エージェントの再起動
 
