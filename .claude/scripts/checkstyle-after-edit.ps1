@@ -14,7 +14,6 @@ if ($filePath -notmatch 'bizprint-server-java[/\\].*\.java$') {
     exit 0
 }
 
-Set-Location $env:CLAUDE_PROJECT_DIR
-mvn checkstyle:check -pl bizprint-server-java -Dcheckstyle.consoleOutput=true 2>&1
+mvn -f "$env:CLAUDE_PROJECT_DIR/pom.xml" checkstyle:check -pl bizprint-server-java -Dcheckstyle.consoleOutput=true 2>&1
 # CheckStyle 違反があっても hook はブロックしない（情報提供のみ。違反はその場で修正すること）
 exit 0
