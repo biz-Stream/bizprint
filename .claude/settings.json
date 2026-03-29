@@ -10,7 +10,6 @@
       "Grep(*)",
       "PowerShell(cd:*)",
       "PowerShell(ls:*)",
-      "PowerShell(file:*)",
       "PowerShell(mvn clean*)",
       "PowerShell(mvn test*)",
       "PowerShell(mvn package*)",
@@ -19,9 +18,23 @@
       "PowerShell(mvn install*)",
       "PowerShell(mvn checkstyle:*)",
       "PowerShell(mvn editorconfig:*)",
-      "PowerShell(wc:*)",
       "PowerShell(which:*)",
-      "PowerShell(git:*)",
+      "PowerShell(git status*)",
+      "PowerShell(git log*)",
+      "PowerShell(git diff*)",
+      "PowerShell(git add*)",
+      "PowerShell(git commit*)",
+      "PowerShell(git push*)",
+      "PowerShell(git pull*)",
+      "PowerShell(git fetch*)",
+      "PowerShell(git checkout*)",
+      "PowerShell(git switch*)",
+      "PowerShell(git branch*)",
+      "PowerShell(git rev-parse*)",
+      "PowerShell(git tag*)",
+      "PowerShell(git stash*)",
+      "PowerShell(git rm*)",
+      "PowerShell(git -C*)",
       "PowerShell(tasklist*)",
       "PowerShell(gh issue list*)",
       "PowerShell(gh issue view*)",
@@ -31,10 +44,14 @@
       "PowerShell(gh pr create*)",
       "PowerShell(gh pr diff*)",
       "PowerShell(gh pr comment*)",
+      "PowerShell(gh pr merge*)",
       "PowerShell(gh run list*)",
       "PowerShell(gh run view*)",
-      "PowerShell(gh api*)",
-      "PowerShell(gh repo view*)"
+      "PowerShell(gh api repos/*/issues*)",
+      "PowerShell(gh api repos/*/pulls*)",
+      "PowerShell(gh api repos/*/comments*)",
+      "PowerShell(gh repo view*)",
+      "PowerShell(gh release list*)"
     ]
   },
   "hooks": {
@@ -44,18 +61,31 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/scripts/guard-main-branch.sh\""
+            "command": "& \"$env:CLAUDE_PROJECT_DIR/.claude/scripts/guard-main-branch.ps1\"",
+            "shell": "powershell"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "& \"$env:CLAUDE_PROJECT_DIR/.claude/scripts/checkstyle-after-edit.ps1\"",
+            "shell": "powershell"
           }
         ]
       }
     ],
     "SessionStart": [
       {
-        "matcher": "compact",
         "hooks": [
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && echo '=== コンテキスト圧縮後の作業コンテキスト ===' && echo \"ブランチ: $(git rev-parse --abbrev-ref HEAD 2>/dev/null)\" && echo '--- 最近のコミット (5件) ---' && git log --oneline -5 2>/dev/null && echo '--- 変更中のファイル ---' && git status --short 2>/dev/null && echo '==='"
+            "command": "Set-Location $env:CLAUDE_PROJECT_DIR; Write-Output '=== 作業コンテキスト ==='; Write-Output \"ブランチ: $(git rev-parse --abbrev-ref HEAD 2>$null)\"; Write-Output '--- 最近のコミット (5件) ---'; git log --oneline -5 2>$null; Write-Output '--- 変更中のファイル ---'; git status --short 2>$null; Write-Output '==='",
+            "shell": "powershell"
           }
         ]
       }

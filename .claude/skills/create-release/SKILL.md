@@ -6,7 +6,15 @@ shell: powershell
 
 # create-release スキル
 
+## Purpose
+
 タグを作成・push して GitHub Actions のリリースワークフローを起動する。
+
+## Usage
+
+```
+/create-release
+```
 
 ## 前提条件
 
@@ -78,3 +86,17 @@ gh run list --workflow=release.yml --limit 1
 > タグ `<バージョン>` を push しました。リリースワークフローが実行中です。
 > 完了すると GitHub Releases にリリースが作成され、成果物がアップロードされます。
 > 進捗は `gh run watch` または GitHub の Actions タブで確認できます。
+
+## 完了条件
+
+- タグが push され、リリースワークフローが起動していること。
+- ワークフローの成否確認はユーザーに委ねる。
+
+## MUST
+
+- タグ push 前にユーザーの最終確認を得ること。
+- main ブランチ上で実行すること。
+
+## MUST NOT
+
+- ユーザーの確認なしにタグを push しないこと。

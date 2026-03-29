@@ -6,15 +6,16 @@ globs:
 
 # CheckStyle コーディング規約
 
-## コミット前の確認手順
+## 自動チェック
 
-Java ソースを変更した場合、コミット前に以下を実行する:
+Java ファイル編集後、PostToolUse hook により CheckStyle が自動実行される。
+違反が報告された場合はその場で修正すること。
 
-```bash
+手動で確認する場合:
+
+```powershell
 mvn checkstyle:check -pl <module> -Dcheckstyle.consoleOutput=true
 ```
-
-違反が報告された場合は修正してからコミットする。
 
 ## ボーイスカウトルール
 
@@ -35,7 +36,7 @@ mvn checkstyle:check -pl <module> -Dcheckstyle.consoleOutput=true
 
 非 Java ファイルの変更時も EditorConfig に従う:
 
-```bash
+```powershell
 mvn editorconfig:check
 ```
 
