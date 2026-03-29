@@ -33,3 +33,15 @@ Git 管理から除外されてしまう。
 リポジトリに追加できない。この場合は `maven-build` のように別名にすること。
 
 スキルを追加したら `git status` で意図通り追跡されているか確認すること。
+
+## PowerShell 必須
+
+すべてのスキルは PowerShell を前提とする。
+
+- フロントマターに `shell: powershell` を記述する。
+- コードブロックは ` ```powershell ` で記述する（` ```bash ` は使わない）。
+- Bash 固有の構文を使わない:
+  - リダイレクト: `2>/dev/null` → `2>$null`
+  - 行継続: `\` → `` ` ``（バッククォート）
+  - 変数代入: `VAR=value` → `$VAR = "value"`
+- Windows PowerShell 5.1 でも動作するよう、pwsh 7+ 固有構文は避ける。

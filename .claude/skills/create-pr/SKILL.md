@@ -1,6 +1,7 @@
 ---
 name: create-pr
 description: GitHub プルリクエストを作成する。ビルド成功・コミット・プッシュ完了後に使用。
+shell: powershell
 ---
 
 # create-pr スキル
@@ -19,9 +20,9 @@ GitHub プルリクエストを作成するワークフロー。
 
 `.github/pull_request_template.md` を読み込み、テンプレートに沿って本文を作成する。
 
-```bash
-gh pr create \
-  --title "<イシュー番号に対応するタイトル>" \
+```powershell
+gh pr create `
+  --title "<イシュー番号に対応するタイトル>" `
   --body "<テンプレートに沿った本文>"
 ```
 
@@ -41,7 +42,7 @@ CronCreate ツールを以下のパラメータで呼び出す:
 ```
 以下のコマンドで CI ワークフローの状態を確認してください:
 
-gh run list --branch <ブランチ名> --limit 1 --json status,conclusion,name,createdAt 2>/dev/null
+gh run list --branch <ブランチ名> --limit 1 --json status,conclusion,name,createdAt 2>$null
 
 レスポンスを確認し:
 - レスポンスが空配列の場合:

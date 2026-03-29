@@ -1,6 +1,7 @@
 ---
 name: check-review
 description: PR のレビューコメントを取得・表示し、指摘事項への対応を支援する。
+shell: powershell
 ---
 
 # check-review スキル
@@ -34,8 +35,8 @@ PR 番号が省略された場合はユーザーに確認する。
 
 ### 1. レビューコメントの取得
 
-```bash
-PR_NUM=<PR番号>
+```powershell
+$PR_NUM = <PR番号>
 
 # PR のコメント一覧を取得
 gh pr view $PR_NUM --comments
@@ -71,7 +72,7 @@ gh pr view $PR_NUM --comments
 3. ユーザーが承認したら、コミット・プッシュする
 4. PR に対応完了のコメントを投稿する:
 
-```bash
+```powershell
 gh pr comment $PR_NUM --body "レビュー指摘事項に対応しました。再レビューをお願いします。"
 ```
 
@@ -91,7 +92,7 @@ CronCreate ツールを以下のパラメータで呼び出す:
 ```
 以下のコマンドで CI ワークフローの状態を確認してください:
 
-gh run list --branch <ブランチ名> --limit 1 --json status,conclusion,name,createdAt 2>/dev/null
+gh run list --branch <ブランチ名> --limit 1 --json status,conclusion,name,createdAt 2>$null
 
 レスポンスを確認し:
 - レスポンスが空配列の場合:
