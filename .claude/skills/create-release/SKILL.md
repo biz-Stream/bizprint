@@ -1,6 +1,7 @@
 ---
 name: create-release
 description: GitHub リリースを作成する（タグを作成して push し、リリースワークフローを起動）。
+shell: powershell
 ---
 
 # create-release スキル
@@ -18,7 +19,7 @@ description: GitHub リリースを作成する（タグを作成して push し
 
 以下をすべて確認する。1つでも失敗したら中断してユーザーに報告する。
 
-```bash
+```powershell
 # main ブランチにいるか
 git branch --show-current  # => main
 
@@ -40,7 +41,7 @@ git diff HEAD origin/main --quiet  # => 差分なし
   - 不正な例: `1.0.0`（v なし）, `v1.0`（パッチなし）
 - 同名のタグが既に存在しないこと
 
-```bash
+```powershell
 # 既存タグとの重複チェック
 git tag -l "<バージョン>"  # => 空であること
 ```
@@ -51,7 +52,7 @@ git tag -l "<バージョン>"  # => 空であること
 
 直近のリリースを表示して、バージョン番号が適切か確認する参考情報とする。
 
-```bash
+```powershell
 gh release list --limit 5
 ```
 
@@ -59,7 +60,7 @@ gh release list --limit 5
 
 ユーザーの最終確認を得てから実行する。
 
-```bash
+```powershell
 git tag <バージョン>
 git push origin <バージョン>
 ```
@@ -68,7 +69,7 @@ git push origin <バージョン>
 
 タグ push 後、リリースワークフローが起動したことを確認する。
 
-```bash
+```powershell
 gh run list --workflow=release.yml --limit 1
 ```
 

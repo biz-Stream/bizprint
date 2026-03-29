@@ -1,6 +1,7 @@
 ---
 name: maven-build
 description: Maven 一括ビルドを実行する。コミット・プッシュ前の確認に使用。
+shell: powershell
 ---
 
 # maven-build スキル
@@ -11,13 +12,13 @@ Maven 一括ビルドを実行する。
 
 ### クリーンビルド（フルビルド）
 
-```bash
+```powershell
 mvn clean install
 ```
 
 ### パッケージビルド
 
-```bash
+```powershell
 mvn clean package
 ```
 
