@@ -4,6 +4,9 @@
   },
   "defaultShell": "powershell",
   "permissions": {
+    "deny": [
+      "Bash"
+    ],
     "allow": [
       "Read(*)",
       "Glob(*)",
