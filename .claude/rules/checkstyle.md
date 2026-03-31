@@ -6,12 +6,10 @@ globs:
 
 # CheckStyle コーディング規約
 
-## 自動チェック
+## チェック方法
 
-Java ファイル編集後、PostToolUse hook により CheckStyle が自動実行される。
+Java ファイル編集後、以下のコマンドで CheckStyle 違反がないか確認すること。
 違反が報告された場合はその場で修正すること。
-
-手動で確認する場合:
 
 ```powershell
 mvn checkstyle:check -pl <module> -Dcheckstyle.consoleOutput=true
