@@ -1,5 +1,5 @@
 # 製品概要
-bizprint は [biz-Stream](https://www.brainsellers.com/product/bizstream/) 製品のダイレクト印刷・バッチ印刷機能を
+bizprint は [biz-Stream](https://www.tecnos.co.jp/bs/biz-stream/) 製品のダイレクト印刷・バッチ印刷機能を
 オープンソース化したプロジェクトである（Apache License v2.0）。
 
 サーバーサイドで印刷データ（spp ファイル）を生成し、クライアント（Windows サービス）が受信して印刷を実行する。

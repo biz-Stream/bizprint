@@ -1,6 +1,6 @@
 # biz-Stream ダイレクト印刷・バッチ印刷 (オープンソース版)
 
-このリポジトリでは[ブレインセラーズ・ドットコム株式会社](https://www.brainsellers.com/)が提供している[biz-Stream](https://www.brainsellers.com/product/bizstream/)製品のうち、ダイレクト印刷とバッチ印刷に関するソースを公開しています。
+このリポジトリでは[ブレインセラーズ・ドットコム株式会社](https://www.tecnos.co.jp/bs/)が提供している[biz-Stream](https://www.tecnos.co.jp/bs/biz-stream/)製品のうち、ダイレクト印刷とバッチ印刷に関するソースを公開しています。
 
 ※"biz-Stream"はブレインセラーズ・ドットコム株式会社の登録商標です。
 
