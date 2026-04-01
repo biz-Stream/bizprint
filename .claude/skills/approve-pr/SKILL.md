@@ -7,6 +7,7 @@ shell: powershell
 # approve-pr
 
 ## Purpose
+
 PRの承認・マージ・マージ完了確認・ブランチ戻しを一貫して実行する。
 レビュースキル（`/create-pr`、`/check-review`）とは分離されている。承認権限を持つユーザーが使用する想定。
 
@@ -51,6 +52,11 @@ gh api user --jq ".login"
 
 ```powershell
 gh pr review <PR番号> --approve
+```
+
+approve が成功したことを確認してから merge を実行する。
+
+```powershell
 gh pr merge <PR番号> --merge --delete-branch
 ```
 
@@ -80,7 +86,11 @@ gh pr view <PR番号> --json state --jq ".state"
 
 ### 5. 派生元ブランチに戻す
 
-手順 1 で取得した PR 情報から baseRefName（マージ先ブランチ）を確認する。
+PR 情報から baseRefName（マージ先ブランチ）を取得する。
+
+```powershell
+gh pr view <PR番号> --json baseRefName --jq ".baseRefName"
+```
 
 現在のブランチと baseRefName を比較し:
 
