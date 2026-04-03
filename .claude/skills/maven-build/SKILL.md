@@ -1,6 +1,8 @@
 ---
 name: maven-build
 description: Maven 一括ビルドを実行する。コミット・プッシュ前の確認に使用。
+model: opus
+effort: low
 shell: powershell
 ---
 

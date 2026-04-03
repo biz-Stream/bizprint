@@ -1,6 +1,8 @@
 ---
 name: check-review
 description: PR のレビューコメントを取得・表示し、指摘事項への対応を支援する。
+model: opus
+effort: low
 shell: powershell
 ---
 

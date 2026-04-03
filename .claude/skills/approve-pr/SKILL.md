@@ -1,6 +1,8 @@
 ---
 name: approve-pr
 description: PRを承認・マージし、マージ完了を確認してブランチを戻す。「承認＆マージ」「approve」等のキーワードで使用する。
+model: opus
+effort: low
 shell: powershell
 ---
 
@@ -84,30 +86,41 @@ gh pr view <PR番号> --json state --jq ".state"
 - `MERGED` → マージ成功。手順 5 へ進む。
 - `OPEN` または `CLOSED` → **マージ失敗**。ユーザーにエラー報告し、スキルを中止する。
 
-### 5. 派生元ブランチに戻す
+### 5. ワークツリー判定とブランチ戻し
 
-PR 情報から baseRefName（マージ先ブランチ）を取得する。
+現在のセッションがワークツリー上かどうかを判定する:
 
 ```powershell
-gh pr view <PR番号> --json baseRefName --jq ".baseRefName"
+git rev-parse --show-toplevel
 ```
 
-現在のブランチと baseRefName を比較し:
+- **ワークツリー上の場合**（パスに `.claude/worktrees/` を含む）:
+  → `ExitWorktree` ツールを実行してワークツリーを削除し、本体リポジトリに戻る。
+  ブランチ戻し（checkout/pull）は不要。
 
-- **異なる場合**（自分のPRをマージした場合）:
+- **本体リポジトリの場合**:
+  PR 情報から baseRefName（マージ先ブランチ）を取得する。
+
   ```powershell
-  git checkout <baseRefName>
-  git pull origin <baseRefName>
+  gh pr view <PR番号> --json baseRefName --jq ".baseRefName"
   ```
 
-- **同じ場合**（他人のPRを承認した場合。既に baseRefName にいる）:
-  ```powershell
-  git pull origin <baseRefName>
-  ```
+  現在のブランチと baseRefName を比較し:
+
+  - **異なる場合**（自分のPRをマージした場合）:
+    ```powershell
+    git checkout <baseRefName>
+    git pull origin <baseRefName>
+    ```
+
+  - **同じ場合**（他人のPRを承認した場合。既に baseRefName にいる）:
+    ```powershell
+    git pull origin <baseRefName>
+    ```
 
 ### 6. 完了報告
 
-マージ完了と現在のブランチをユーザーに報告する。
+マージ完了と現在のブランチ（またはワークツリー削除完了）をユーザーに報告する。
 
 ## MUST
 - 手順 4 のマージ完了確認を必ず実行すること（`gh pr view` で `MERGED` を確認）
@@ -122,4 +135,5 @@ gh pr view <PR番号> --json baseRefName --jq ".baseRefName"
 
 ## 完了条件
 - PR が `state: MERGED` であること
-- baseRefName にチェックアウトし、最新の状態に pull 済みであること
+- ワークツリー上の場合: ExitWorktree でワークツリーが削除され、本体リポジトリに戻っていること
+- 本体リポジトリの場合: baseRefName にチェックアウトし、最新の状態に pull 済みであること

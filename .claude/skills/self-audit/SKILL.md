@@ -1,6 +1,7 @@
 ---
 name: self-audit
 description: Claude Code 運用の自己改善監査。ネット調査・CLAUDE.md監査・スキル品質監査を並列実行し、統合した改善提案を出力する。
+model: opus
 effort: high
 shell: powershell
 ---
