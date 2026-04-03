@@ -1,6 +1,8 @@
 ---
 name: create-pr
 description: GitHub プルリクエストを作成する。ビルド成功・コミット・プッシュ完了後に使用。
+model: opus
+effort: low
 shell: powershell
 ---
 

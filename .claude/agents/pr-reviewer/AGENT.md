@@ -2,8 +2,8 @@
 name: pr-reviewer
 description: GitHub PR をレビューし、PR コメント投稿を自ら行い、全文を親セッションに返す。「PR をレビューして」「レビューお願い」等で使用する。
 tools: Read, Glob, Grep, PowerShell
-model: opus
-effort: high
+model: sonnet
+effort: medium
 ---
 
 # PR レビューエージェント
