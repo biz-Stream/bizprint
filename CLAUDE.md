@@ -29,6 +29,10 @@ bizprint は biz-Stream の印刷系モジュールを独立させたもの。
 - Inno Setup 6 以上
 - Adobe Acrobat Reader（クライアント実行時に必要。ActiveX コントロールを利用）
 
+### Claude Code 利用時の追加要件
+- PowerShell 7+（pwsh）
+- GitHub CLI (`gh`)
+
 ### 注意
 - 暗号化キーはビルドのたびにランダム生成される。サーバー側とクライアント側で同じキーが必要なため、**一部モジュールのみのビルドは不可。必ず一括ビルドすること。**
 

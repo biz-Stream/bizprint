@@ -44,4 +44,4 @@ Git 管理から除外されてしまう。
   - リダイレクト: `2>/dev/null` → `2>$null`
   - 行継続: `\` → `` ` ``（バッククォート）
   - 変数代入: `VAR=value` → `$VAR = "value"`
-- Windows PowerShell 5.1 でも動作するよう、pwsh 7+ 固有構文は避ける。
+- Claude Code は pwsh 7+ で動作するため、pwsh 7+ 固有構文（`&&`, `||`, 三項演算子等）を使用してよい。
