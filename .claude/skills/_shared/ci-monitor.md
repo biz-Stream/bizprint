@@ -8,29 +8,46 @@ Monitor ツールを以下のパラメータで呼び出すこと。
 - **persistent**: `false`
 - **command**:
 
-```powershell
-$start = [datetime](Get-Date).ToUniversalTime()
-while ($true) {
-  Start-Sleep -Seconds 30
-  try {
-    $run = gh run list --branch "<ブランチ名>" --limit 1 --json status,conclusion,createdAt 2>$null |
-      ConvertFrom-Json | Select-Object -First 1
-    if (-not $run) {
-      Write-Output "CI NOT_FOUND: ワークフローが見つかりません（CI 対象外の変更です）。"; exit 1
-    }
-    if ([datetime]$run.createdAt -lt $start) {
-      if (((Get-Date).ToUniversalTime() - $start).TotalSeconds -ge 120) {
-        Write-Output "CI NOT_FOUND: ワークフローが見つかりません（CI 対象外の変更です）。"; exit 1
-      }
-      continue
-    }
-    switch ($run.conclusion) {
-      'success'   { Write-Output "CI SUCCESS: ワークフローが成功しました。"; exit 0 }
-      'failure'   { Write-Output "CI FAILED: ワークフローが失敗しました (conclusion: failure)。確認してください。"; exit 1 }
-      'cancelled' { Write-Output "CI FAILED: ワークフローが失敗しました (conclusion: cancelled)。確認してください。"; exit 1 }
-    }
-  } catch { Write-Warning $_.Exception.Message }
-}
+```bash
+START=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+START_EPOCH=$(date -u +%s)
+BRANCH="<ブランチ名>"
+
+while true; do
+  sleep 30
+  RESULT=$(gh run list --branch "$BRANCH" --limit 1 \
+    --json status,conclusion,createdAt \
+    --jq '.[0] // empty | "\(.createdAt) \(.status) \(.conclusion)"' 2>/dev/null) || {
+    echo "WARNING: gh API error" >&2
+    continue
+  }
+
+  # ワークフローが存在しない場合
+  if [ -z "$RESULT" ]; then
+    echo "CI NOT_FOUND: ワークフローが見つかりません（CI 対象外の変更です）。"
+    exit 1
+  fi
+
+  CREATED=$(echo "$RESULT" | awk '{print $1}')
+  CONCLUSION=$(echo "$RESULT" | awk '{print $3}')
+
+  # Monitor 起動前のランは無視（2分経過で NOT_FOUND）
+  if [ "$CREATED" \< "$START" ]; then
+    ELAPSED=$(( $(date -u +%s) - START_EPOCH ))
+    if [ "$ELAPSED" -ge 120 ]; then
+      echo "CI NOT_FOUND: ワークフローが見つかりません（CI 対象外の変更です）。"
+      exit 1
+    fi
+    continue
+  fi
+
+  # terminal state の判定
+  case "$CONCLUSION" in
+    success)   echo "CI SUCCESS: ワークフローが成功しました。"; exit 0 ;;
+    failure)   echo "CI FAILED: ワークフローが失敗しました (conclusion: failure)。確認してください。"; exit 1 ;;
+    cancelled) echo "CI FAILED: ワークフローが失敗しました (conclusion: cancelled)。確認してください。"; exit 1 ;;
+  esac
+done
 ```
 
 `<ブランチ名>` は `git branch --show-current` で取得した値に置き換えること。
