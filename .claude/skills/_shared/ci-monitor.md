@@ -9,7 +9,7 @@ Monitor ツールを以下のパラメータで呼び出すこと。
 - **command**:
 
 ```
-START=$(date -u +%Y-%m-%dT%H:%M:%SZ); BRANCH=<ブランチ名>; while true; do sleep 30; STATUS=$(gh run list --branch "$BRANCH" --limit 1 --json status,conclusion,createdAt --jq ".[0] | if . == null then \"not_found\" elif .createdAt < \"$START\" then \"old\" elif .conclusion == \"success\" then \"success\" elif .conclusion == \"failure\" then \"failure\" elif .conclusion == \"cancelled\" then \"cancelled\" elif .status == \"in_progress\" or .status == \"queued\" then \"in_progress\" else \"unknown\" end" 2>/dev/null || echo "api_error"); case $STATUS in success) echo "CI SUCCESS: ワークフローが成功しました。"; exit 0;; failure|cancelled) echo "CI FAILED: ワークフローが失敗しました (status: $STATUS)。確認してください。"; exit 1;; not_found) echo "CI NOT_FOUND: ワークフローが見つかりません（CI 対象外の変更です）。"; exit 1;; api_error|old|in_progress) ;; esac; done
+START=$(date -u +%Y-%m-%dT%H:%M:%SZ); BRANCH=<ブランチ名>; while true; do sleep 30; STATUS=$(gh run list --branch "$BRANCH" --limit 1 --json status,conclusion,createdAt --jq ".[0] | if . == null then \"not_found\" elif .createdAt < \"$START\" then \"old\" elif .conclusion == \"success\" then \"success\" elif .conclusion == \"failure\" then \"failure\" elif .conclusion == \"cancelled\" then \"cancelled\" elif .status == \"in_progress\" or .status == \"queued\" then \"in_progress\" else \"unknown\" end" 2>/dev/null || echo "api_error"); case $STATUS in success) echo "CI SUCCESS: ワークフローが成功しました。"; exit 0;; failure|cancelled) echo "CI FAILED: ワークフローが失敗しました (status: $STATUS)。確認してください。"; exit 1;; not_found) echo "CI NOT_FOUND: ワークフローが見つかりません（CI 対象外の変更です）。"; exit 1;; api_error|old|in_progress|unknown) ;; esac; done
 ```
 
 `<ブランチ名>` は `git branch --show-current` で取得した値に置き換えること。
