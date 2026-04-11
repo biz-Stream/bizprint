@@ -11,7 +11,7 @@ shell: powershell
 ## Purpose
 
 PRの承認・マージ・マージ完了確認・ブランチ戻しを一貫して実行する。
-レビュースキル（`/create-pr`、`/check-review`）とは分離されている。承認権限を持つユーザーが使用する想定。
+レビュースキル（`/create-pr`、`/check-review`）とは分離されている。承認権限については `.claude/rules/pr-approval.md` を参照。
 
 ## Usage
 - `/approve-pr <PR番号>` — 指定PRを承認・マージする

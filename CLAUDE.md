@@ -79,6 +79,7 @@ mvn editorconfig:check -pl bizprint-server-java
 - すべての変更は PR 経由で行う。
 - PR 本文に `Closes #<イシュー番号>` を記述してイシューと連携する。
 - CI が通っていない PR はマージしない。
+- **PR 承認は責任者のみ**（`docs/` 配下のみの変更を除く）。詳細: `.claude/rules/pr-approval.md`
 
 ## コミットメッセージ規約
 - フォーマット: `<プレフィックス> <変更内容の要約（日本語）> (#<イシュー番号>)`
