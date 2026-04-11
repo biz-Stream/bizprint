@@ -9,7 +9,7 @@ Monitor ツールを以下のパラメータで呼び出すこと。
 - **command**:
 
 ```powershell
-$start = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+$start = [datetime](Get-Date).ToUniversalTime()
 while ($true) {
   Start-Sleep -Seconds 30
   try {
@@ -18,7 +18,12 @@ while ($true) {
     if (-not $run) {
       Write-Output "CI NOT_FOUND: ワークフローが見つかりません（CI 対象外の変更です）。"; exit 1
     }
-    if ($run.createdAt -lt $start) { continue }
+    if ([datetime]$run.createdAt -lt $start) {
+      if (((Get-Date).ToUniversalTime() - $start).TotalSeconds -ge 120) {
+        Write-Output "CI NOT_FOUND: ワークフローが見つかりません（CI 対象外の変更です）。"; exit 1
+      }
+      continue
+    }
     switch ($run.conclusion) {
       'success'   { Write-Output "CI SUCCESS: ワークフローが成功しました。"; exit 0 }
       'failure'   { Write-Output "CI FAILED: ワークフローが失敗しました (conclusion: failure)。確認してください。"; exit 1 }
@@ -36,7 +41,8 @@ while ($true) {
 - 30秒間隔でポーリング（LLMターン不要）
 - terminal state（success / failure / cancelled）を検知すると1行出力して自動終了
 - ワークフローが見つからない場合も1行出力して終了
-- API エラー・古いラン検知時はリトライ（出力なし）
+- 起動から2分経過しても新しいランが見つからない場合は NOT_FOUND で終了（CI 対象外の変更への早期フィードバック）
+- API エラー時はリトライ（出力なし）
 - タイムアウト10分
 
 ## CI 監視の検知後
