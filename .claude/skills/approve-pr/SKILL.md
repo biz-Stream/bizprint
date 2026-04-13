@@ -127,7 +127,7 @@ Monitor ツールのパラメータ:
 
 - **timeout_ms**: `600000`（10分。bizprint の Build ワークフローは 1.6〜2.6 分のため十分）
 - **persistent**: `false`
-- **description**: `<baseRefName> マージ後 CI ワークフロー監視`
+- **description**: `<baseRefName> マージ後 CI ワークフロー監視`（`<baseRefName>` は実際のブランチ名（例: `main`）に置き換えること）
 
 **ワークツリー上の場合はこのステップをスキップする**（ExitWorktree 後は本体リポジトリの状態に触らない方針）。
 スキップした場合は手順 7 の完了報告でユーザーに手動確認を依頼する旨を含める。

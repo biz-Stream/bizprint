@@ -14,7 +14,7 @@ while true; do
   sleep 30
   RESULT=$(gh run list --commit "$SHA" --limit 1 \
     --json status,conclusion \
-    --jq '.[0] // empty | "\(.status) \(.conclusion)"' 2>/dev/null) || {
+    --jq '.[0] // empty | "\(.status) \(.conclusion // "null")"' 2>/dev/null) || {
     echo "WARNING: gh API error" >&2
     continue
   }
