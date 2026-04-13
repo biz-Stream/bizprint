@@ -1,71 +1,62 @@
 # CI 監視 Monitor テンプレート
 
-CI ワークフローの状態を監視する Monitor を作成する。
+CI ワークフローの状態を Monitor ツールで監視する。
 Monitor ツールを以下のパラメータで呼び出すこと。
 
-- **description**: `CI ワークフロー監視 (<ブランチ名>)`
-- **timeout_ms**: `600000`（10分）
-- **persistent**: `false`
 - **command**:
 
-```bash
-START=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-START_EPOCH=$(date -u +%s)
-BRANCH="<ブランチ名>"
+> **Note:** Monitor ツールは bash で実行されるため、コマンドは bash で記述する。
 
+```bash
+SHA=$(git rev-parse HEAD)
+NOT_FOUND=0
 while true; do
   sleep 30
-  RESULT=$(gh run list --branch "$BRANCH" --limit 1 \
-    --json status,conclusion,createdAt \
-    --jq '.[0] // empty | "\(.createdAt) \(.status) \(.conclusion)"' 2>/dev/null) || {
+  RESULT=$(gh run list --commit "$SHA" --limit 1 \
+    --json status,conclusion \
+    --jq '.[0] // empty | "\(.status) \(.conclusion // "null")"' 2>/dev/null) || {
     echo "WARNING: gh API error" >&2
     continue
   }
 
-  # ワークフローが存在しない場合
   if [ -z "$RESULT" ]; then
-    echo "CI NOT_FOUND: ワークフローが見つかりません（CI 対象外の変更です）。"
-    exit 1
-  fi
-
-  CREATED=$(echo "$RESULT" | awk '{print $1}')
-  CONCLUSION=$(echo "$RESULT" | awk '{print $3}')
-
-  # Monitor 起動前のランは無視（2分経過で NOT_FOUND）
-  if [ "$CREATED" \< "$START" ]; then
-    ELAPSED=$(( $(date -u +%s) - START_EPOCH ))
-    if [ "$ELAPSED" -ge 120 ]; then
-      echo "CI NOT_FOUND: ワークフローが見つかりません（CI 対象外の変更です）。"
-      exit 1
+    NOT_FOUND=$((NOT_FOUND+1))
+    if [ $NOT_FOUND -ge 5 ]; then
+      echo "CI_RESULT: not_found"; exit 1
     fi
     continue
   fi
 
-  # terminal state の判定
+  CONCLUSION=$(echo "$RESULT" | awk '{print $2}')
+
   case "$CONCLUSION" in
-    success)   echo "CI SUCCESS: ワークフローが成功しました。"; exit 0 ;;
-    failure)   echo "CI FAILED: ワークフローが失敗しました (conclusion: failure)。確認してください。"; exit 1 ;;
-    cancelled) echo "CI FAILED: ワークフローが失敗しました (conclusion: cancelled)。確認してください。"; exit 1 ;;
+    success|skipped)   echo "CI_RESULT: $CONCLUSION"; exit 0 ;;
+    failure|cancelled) echo "CI_RESULT: $CONCLUSION"; exit 1 ;;
   esac
 done
 ```
 
-`<ブランチ名>` は `git branch --show-current` で取得した値に置き換えること。
+- **timeout_ms**: 監視対象に応じて指定する（bizprint の Build ワークフローは 1.6〜2.6 分のため `600000` / 10分で十分）
+- **persistent**: `false`
+- **description**: `CI ワークフロー監視`
 
-## 動作仕様
+監視対象のコミット SHA は Monitor 起動時の `HEAD` で自動取得する。呼び出し元で事前に目的のブランチを checkout（必要なら pull）しておくこと。
 
-- Monitor 起動時の時刻を自動記録し、それ以降に作成されたランのみを対象にする（古いランの誤検知を防止）
-- 30秒間隔でポーリング（LLMターン不要）
-- terminal state（success / failure / cancelled）を検知すると1行出力して自動終了
-- ワークフローが見つからない場合も1行出力して終了
-- 起動から2分経過しても新しいランが見つからない場合は NOT_FOUND で終了（CI 対象外の変更への早期フィードバック）
-- API エラー時はリトライ（出力なし）
-- タイムアウト10分
+## ワークフローステータスの扱い
+
+| GitHub Actions conclusion | 扱い | 備考 |
+|---|---|---|
+| `success` | 正常終了（exit 0） | CI 通過 |
+| `skipped` | 正常終了（exit 0） | パス条件等で実行対象外（例: `.claude/` のみの変更） |
+| `failure` / `cancelled` | エラー終了（exit 1） | 要対応 |
+| `not_found` | 5 回連続で検知したら `not_found` としてエラー終了 | 該当 SHA のワークフローが作成されていない |
+| `null`（status: `queued` / `in_progress` 等） | 監視継続 | conclusion が確定するまで待機 |
 
 ## CI 監視の検知後
 
-Monitor からの通知を受け取ったら:
+Monitor が完了したら出力内容を確認する。
 
-- **CI SUCCESS** → ユーザーに報告する。
-- **CI FAILED** → ユーザーに確認する。修正・再プッシュした場合は CI 監視 Monitor を再作成する。
-- **CI NOT_FOUND** → ユーザーに報告する。
+- **`CI_RESULT: success`** / **`CI_RESULT: skipped`** → ユーザーに報告する。
+- **`CI_RESULT: failure`** / **`CI_RESULT: cancelled`** → ユーザーに確認する。修正・再プッシュした場合は Monitor を再作成する。
+- **`CI_RESULT: not_found`** → 該当 SHA のワークフローが作成されていない旨をユーザーに報告する。
+- **タイムアウト** → ユーザーに報告し、手動確認を依頼する。
