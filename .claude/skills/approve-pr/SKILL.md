@@ -118,14 +118,35 @@ git rev-parse --show-toplevel
     git pull origin <baseRefName>
     ```
 
-### 6. 完了報告
+### 6. baseRefName マージ後 CI 監視開始
 
-マージ完了と現在のブランチ（またはワークツリー削除完了）をユーザーに報告する。
+マージ後に baseRefName で新たに起動される CI ワークフローを Monitor ツールで非同期監視する。
+`@_shared/ci-monitor.md` のテンプレートを使用する。監視対象 SHA は Monitor 起動時の `HEAD` で自動取得されるため、手順 5 で baseRefName に checkout・pull 済みの状態で呼び出す。
+
+Monitor ツールのパラメータ:
+
+- **timeout_ms**: `600000`（10分。bizprint の Build ワークフローは 1.6〜2.6 分のため十分）
+- **persistent**: `false`
+- **description**: `<baseRefName> マージ後 CI ワークフロー監視`
+
+**ワークツリー上の場合はこのステップをスキップする**（ExitWorktree 後は本体リポジトリの状態に触らない方針）。
+スキップした場合は手順 7 の完了報告でユーザーに手動確認を依頼する旨を含める。
+
+Monitor 起動後はブロックせず手順 7 に進む。CI 結果は後追いで通知される。
+
+### 7. 完了報告
+
+以下をユーザーに報告する:
+
+- マージ完了（PR 番号、`state: MERGED`）
+- 現在のブランチ（またはワークツリー削除完了）
+- baseRefName の CI 監視を開始した旨（ワークツリー時はスキップした旨と手動確認の依頼）
 
 ## MUST
 - 手順 4 のマージ完了確認を必ず実行すること（`gh pr view` で `MERGED` を確認）
 - 前提条件（LGTM + CI pass）を満たさない場合は承認・マージしないこと
 - 手順 2 でPR作成者を判定し、適切な手順（3A or 3B）を選択すること
+- 本体リポジトリの場合、手順 6 の baseRefName CI 監視 Monitor を必ず起動すること
 
 ## MUST NOT
 - MUST 指摘が残っている PR を承認してはいけない
@@ -136,4 +157,4 @@ git rev-parse --show-toplevel
 ## 完了条件
 - PR が `state: MERGED` であること
 - ワークツリー上の場合: ExitWorktree でワークツリーが削除され、本体リポジトリに戻っていること
-- 本体リポジトリの場合: baseRefName にチェックアウトし、最新の状態に pull 済みであること
+- 本体リポジトリの場合: baseRefName にチェックアウトし、最新の状態に pull 済みであること、かつ baseRefName の CI 監視 Monitor が起動されていること
